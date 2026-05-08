@@ -10,7 +10,6 @@ O projeto Aureon é um trabalho desenvolvido para apresentação do **Projeto In
 Participantes desse projeto: 
 - Iasmin
 - Paulo Thaylam
-- Thalisson
 - Alef Oliveir
 <br>
 
