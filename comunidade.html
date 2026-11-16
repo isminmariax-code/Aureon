@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+        <!-- CSS (os mesmos do index.html + o da Comunidade) -->
+        <link href="./src/styles/reset.css" rel="stylesheet">
+        <link href="./src/styles/mainStyle.css" rel="stylesheet">
+        <link href="./src/styles/comunidade.css" rel="stylesheet">
+
+        <title>Comunidade - Aureon</title>
+    </head>
+
+    <body class="page-comunidade">
+        <!-- BARRA DE NAVEGAÇÃO -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="index.html">Aureon</a>
+                <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto text-primary">
+                        <li class="navbar-item"><a class="nav-link text-white" href="index.html">Explorar Cursos</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="#">Minhas Habilidades</a></li>
+                        <li class="navbar-item" aria-current="page"><a class="nav-link text-white nav-ativo" href="comunidade.html">Comunidade</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="#">Como Funciona</a></li>
+                    </ul>
+
+                    <form class="d-flex">
+                        <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button"> Entrar </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button"> Criar Conta </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="container py-4">
+            <h1 class="com-titulo text-font-aureon-logo text-center mb-4">Bem-vindo à Comunidade Aureon - Espaço Colaborativo</h1>
+
+            <div class="row g-4">
+                <!-- Coluna principal -->
+                <section class="col-lg-8">
+                    <div class="com-vidro p-3 mb-4">
+                        <h2 class="h5 text-white mb-3">Nova Pergunta</h2>
+                        <div class="d-flex flex-wrap gap-2">
+                            <input id="q-texto" class="form-control com-input flex-grow-1" type="text" maxlength="120" placeholder="Faça sua pergunta aqui..." aria-label="Sua pergunta">
+                            <select id="q-area" class="form-select com-input com-select" aria-label="Área da pergunta"></select>
+                            <button id="q-enviar" class="com-btn-grad" type="button">Perguntar</button>
+                        </div>
+                        <small id="q-aviso" class="d-block mt-2 com-aviso" role="status"></small>
+                    </div>
+
+                    <h2 class="h5 text-white mb-3">Perguntas organizadas por áreas do conhecimento</h2>
+                    <div id="filtros" class="d-flex flex-wrap gap-2 mb-4"></div>
+                    <div id="lista"></div>
+                </section>
+
+                <!-- Coluna lateral -->
+                <aside class="col-lg-4">
+                    <div class="com-vidro p-3 mb-4">
+                        <h2 class="h5 text-white mb-3">Membros Ativos</h2>
+                        <div id="membros" class="d-flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div class="com-vidro p-3 mb-4">
+                        <h2 class="h5 text-white mb-3">Top Contribuidores</h2>
+                        <ul class="list-unstyled mb-0 d-grid gap-3">
+                            <li class="d-flex align-items-center gap-3"><span class="com-avatar" style="--h:200">A</span><div><div class="text-white">Ana</div><small class="text-info"><i class="bi bi-trophy-fill"></i> Mestre Python</small></div></li>
+                            <li class="d-flex align-items-center gap-3"><span class="com-avatar" style="--h:30">J</span><div><div class="text-white">João</div><small class="text-info"><i class="bi bi-trophy-fill"></i> Expert UI/UX</small></div></li>
+                            <li class="d-flex align-items-center gap-3"><span class="com-avatar" style="--h:290">M</span><div><div class="text-white">Maria</div><small class="text-info"><i class="bi bi-star-fill"></i> Artista Generativa</small></div></li>
+                        </ul>
+                    </div>
+
+                    <div class="com-vidro p-3 mb-4">
+                        <h2 class="h5 text-white mb-3">Últimas Dúvidas</h2>
+                        <ul id="ultimas" class="list-unstyled mb-0 d-grid gap-2"></ul>
+                    </div>
+
+                    <div class="com-vidro p-3">
+                        <h2 class="h5 text-white mb-3">Áreas com Mais Atividade</h2>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="com-area-btn" data-area="Programação Criativa"><i class="bi bi-braces fs-4"></i><span>Programação Criativa</span></button>
+                            <button type="button" class="com-area-btn" data-area="Design de Interface"><i class="bi bi-hand-index-thumb fs-4"></i><span>Design de Interface</span></button>
+                            <button type="button" class="com-area-btn" data-area="Edição de Vídeo"><i class="bi bi-camera-reels fs-4"></i><span>Edição de Vídeo</span></button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
+            <ul class="nav col-md-4 mb-0 list-unstyled d-flex">
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Sobre nós </a></li>
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Termos de Serviço </a></li>
+            </ul>
+            <a href="index.html" class="col-md-4 mb-3 mb-md-0 me-md-auto text-logo-aureon d-flex align-items-center justify-content-center text-decoration-none text-font-aureon-logo">Aureon</a>
+            <ul class="nav fs-4 justify-content-end list-unstyled d-flex col-md-4">
+                <li class="ms-3"><a href="" class="bi bi-instagram"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-facebook"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-youtube"></a></li>
+            </ul>
+        </footer>
+
+        <script>
+            const AREAS = ["Programação Criativa", "Design de Interface", "Arte Generativa", "Edição de Vídeo"];
+            const perguntas = [
+                { nome: "Ana",   titulo: "Dúvida sobre Python decoradores?",        area: AREAS[0], nota: 4.5, respostas: 3, curtidas: 300, curtiu: false },
+                { nome: "João",  titulo: "Como escolher as cores de um app?",       area: AREAS[1], nota: 4.5, respostas: 5, curtidas: 500, curtiu: false },
+                { nome: "Maria", titulo: "Dúvida sobre Arte Generativa?",           area: AREAS[2], nota: 4.5, respostas: 2, curtidas: 205, curtiu: false },
+                { nome: "João",  titulo: "Qual programa usar para editar vídeos?",  area: AREAS[3], nota: 4.5, respostas: 4, curtidas: 300, curtiu: false }
+            ];
+            const membros = ["A", "J", "M", "L", "C", "R", "T", "B"];
+            let filtro = "Todas";
+
+            const $ = (id) => document.getElementById(id);
+            function criar(tag, classe, texto) {
+                const e = document.createElement(tag);
+                if (classe) e.className = classe;
+                if (texto !== undefined) e.textContent = texto;
+                return e;
+            }
+            function avatar(letra) {
+                const a = criar("span", "com-avatar", letra);
+                a.style.setProperty("--h", (letra.charCodeAt(0) * 47) % 360);
+                return a;
+            }
+
+            function mostrarFiltros() {
+                const box = $("filtros");
+                box.replaceChildren();
+                ["Todas", ...AREAS].forEach((area) => {
+                    const b = criar("button", "com-chip" + (area === filtro ? " ativo" : ""), area);
+                    b.type = "button";
+                    b.onclick = () => { filtro = area; mostrarFiltros(); mostrarLista(); };
+                    box.appendChild(b);
+                });
+            }
+
+            function mostrarLista() {
+                const lista = $("lista");
+                lista.replaceChildren();
+                const visiveis = perguntas.filter((p) => filtro === "Todas" || p.area === filtro);
+                if (visiveis.length === 0) {
+                    lista.appendChild(criar("p", "text-white-50", "Ainda não há perguntas nessa área. Faça a primeira!"));
+                    return;
+                }
+                visiveis.forEach((p) => {
+                    const linha = criar("div", "d-flex gap-3 mb-4");
+                    linha.appendChild(avatar(p.nome[0].toUpperCase()));
+
+                    const card = criar("article", "com-vidro com-card p-3 flex-grow-1");
+                    const topo = criar("div", "d-flex justify-content-between");
+                    topo.appendChild(criar("strong", "text-white", p.nome));
+                    topo.appendChild(criar("span", "com-estrela", "★ " + p.nota.toFixed(1)));
+                    card.appendChild(topo);
+                    card.appendChild(criar("p", "text-white fs-5 my-2", p.titulo));
+
+                    const meio = criar("div", "d-flex flex-wrap justify-content-between align-items-center gap-2");
+                    meio.appendChild(criar("span", "com-tag", p.area));
+                    const info = criar("div", "d-flex align-items-center gap-3 text-white");
+                    info.appendChild(criar("span", "", p.respostas + " Respostas"));
+                    const like = criar("button", "com-like" + (p.curtiu ? " ativo" : ""));
+                    like.type = "button";
+                    like.setAttribute("aria-label", "Curtir pergunta");
+                    like.innerHTML = '<i class="bi bi-heart-fill"></i> ';
+                    like.appendChild(document.createTextNode(p.curtidas));
+                    like.onclick = () => { p.curtiu = !p.curtiu; p.curtidas += p.curtiu ? 1 : -1; mostrarLista(); };
+                    info.appendChild(like);
+                    meio.appendChild(info);
+                    card.appendChild(meio);
+
+                    const detalhe = criar("p", "com-detalhe mt-3 mb-0", "");
+                    detalhe.hidden = true;
+                    const acoes = criar("div", "d-flex justify-content-end gap-2 mt-3");
+                    const ver = criar("button", "com-btn-contorno", "Ver Respostas");
+                    ver.type = "button";
+                    ver.onclick = () => {
+                        detalhe.textContent = p.respostas === 0
+                            ? "Ninguém respondeu ainda. Seja o primeiro!"
+                            : "Esta pergunta tem " + p.respostas + " respostas. A lista completa chega na próxima versão.";
+                        detalhe.hidden = !detalhe.hidden;
+                    };
+                    const resp = criar("button", "com-btn-grad", "Responder");
+                    resp.type = "button";
+                    resp.onclick = () => { p.respostas += 1; mostrarLista(); mostrarUltimas(); };
+                    acoes.append(ver, resp);
+                    card.append(acoes, detalhe);
+
+                    linha.appendChild(card);
+                    lista.appendChild(linha);
+                });
+            }
+
+            function mostrarUltimas() {
+                const ul = $("ultimas");
+                ul.replaceChildren();
+                perguntas.slice(-4).reverse().forEach((p) => {
+                    const li = criar("li", "");
+                    li.appendChild(criar("a", "com-link-duvida", p.titulo));
+                    li.firstChild.href = "#lista";
+                    ul.appendChild(li);
+                });
+            }
+
+            function enviarPergunta() {
+                const campo = $("q-texto");
+                const aviso = $("q-aviso");
+                const texto = campo.value.trim();
+                if (texto.length < 5) {
+                    aviso.textContent = "Escreva uma pergunta com pelo menos 5 letras.";
+                    return;
+                }
+                perguntas.push({ nome: "Você", titulo: texto, area: $("q-area").value, nota: 5, respostas: 0, curtidas: 0, curtiu: false });
+                campo.value = "";
+                aviso.textContent = "Pergunta publicada!";
+                filtro = "Todas";
+                mostrarFiltros(); mostrarLista(); mostrarUltimas();
+            }
+
+            // Início
+            AREAS.forEach((a) => { const o = criar("option", "", a); o.value = a; $("q-area").appendChild(o); });
+            membros.forEach((m) => $("membros").appendChild(avatar(m)));
+            document.querySelectorAll(".com-area-btn").forEach((b) => {
+                b.onclick = () => { filtro = b.dataset.area; mostrarFiltros(); mostrarLista(); $("lista").scrollIntoView({ behavior: "smooth" }); };
+            });
+            $("q-enviar").onclick = enviarPergunta;
+            $("q-texto").addEventListener("keydown", (e) => { if (e.key === "Enter") enviarPergunta(); });
+            mostrarFiltros(); mostrarLista(); mostrarUltimas();
+        </script>
+    </body>
+</html>
