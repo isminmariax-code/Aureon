@@ -1,0 +1,164 @@
+/* Estilo da página Comunidade - Aureon
+   Carregado depois do mainStyle.css */
+
+body.page-comunidade {
+    min-height: 100vh;
+    color: #fff;
+    background:
+        radial-gradient(ellipse at 10% 20%, rgba(80, 90, 220, .35), transparent 55%),
+        radial-gradient(ellipse at 90% 75%, rgba(170, 100, 230, .28), transparent 55%),
+        linear-gradient(180deg, #0b1030 0%, #0e1238 100%);
+    background-attachment: fixed;
+}
+
+.page-comunidade .nav-ativo {
+    border-bottom: 2px solid #c9b6ff;
+}
+
+.com-titulo {
+    font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+    color: #cfd2ff;
+}
+
+/* Painéis de vidro */
+.com-vidro {
+    background: rgba(20, 26, 70, .55);
+    border: 1px solid rgba(140, 170, 255, .45);
+    border-radius: 16px;
+    box-shadow: 0 0 18px rgba(120, 140, 255, .18);
+    backdrop-filter: blur(6px);
+}
+
+.com-card { border-color: rgba(150, 210, 255, .5); }
+
+/* Avatares com a inicial do nome */
+.com-avatar {
+    --h: 220;
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    background: hsl(var(--h) 55% 42%);
+    border: 2px solid #d9b8ff;
+    box-shadow: 0 0 10px rgba(190, 150, 255, .6);
+}
+
+/* Campos */
+.com-input {
+    background: rgba(10, 14, 45, .7);
+    border: 1px solid rgba(140, 170, 255, .45);
+    color: #fff;
+}
+.com-input::placeholder { color: rgba(255, 255, 255, .55); }
+.com-input:focus {
+    background: rgba(10, 14, 45, .85);
+    color: #fff;
+    border-color: #9fd8ff;
+    box-shadow: 0 0 0 .2rem rgba(159, 216, 255, .25);
+}
+.com-select { max-width: 210px; }
+.com-select option { color: #000; }
+.com-aviso { color: #ffd98a; min-height: 1.2em; }
+
+/* Botões */
+.com-btn-grad {
+    border: 0;
+    border-radius: 999px;
+    padding: .45rem 1.2rem;
+    font-weight: 600;
+    color: #14173f;
+    background: linear-gradient(90deg, #9fe6ff, #d6a8ff);
+}
+.com-btn-grad:hover { filter: brightness(1.1); }
+
+.com-btn-contorno {
+    border: 1px solid #9fd8ff;
+    border-radius: 999px;
+    padding: .45rem 1.2rem;
+    color: #fff;
+    background: transparent;
+}
+.com-btn-contorno:hover { background: rgba(159, 216, 255, .15); }
+
+.com-btn-grad:focus-visible,
+.com-btn-contorno:focus-visible,
+.com-chip:focus-visible,
+.com-like:focus-visible,
+.com-area-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* Filtros e etiquetas */
+.com-chip {
+    border: 1px solid rgba(160, 190, 255, .7);
+    border-radius: 999px;
+    padding: .25rem .9rem;
+    font-size: .9rem;
+    color: #fff;
+    background: transparent;
+}
+.com-chip.ativo {
+    color: #14173f;
+    font-weight: 600;
+    background: linear-gradient(90deg, #9fe6ff, #d6a8ff);
+    border-color: transparent;
+}
+
+.com-tag {
+    border: 1px solid rgba(160, 190, 255, .6);
+    border-radius: 999px;
+    padding: .15rem .8rem;
+    font-size: .85rem;
+    color: #dfe3ff;
+}
+
+.com-estrela { color: #ffcf5c; }
+
+.com-like {
+    border: 0;
+    background: transparent;
+    color: #fff;
+}
+.com-like i { color: #b9a0f0; }
+.com-like.ativo i { color: #ff7ac8; }
+
+.com-detalhe { color: #cfd2ff; }
+
+/* Barra lateral */
+.com-link-duvida {
+    color: #dfe3ff;
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.com-link-duvida:hover { text-decoration: underline; }
+
+.com-area-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .35rem;
+    padding: .6rem .3rem;
+    font-size: .72rem;
+    line-height: 1.1;
+    text-align: center;
+    color: #fff;
+    background: rgba(20, 26, 70, .7);
+    border: 1px solid rgba(160, 190, 255, .55);
+    border-radius: 12px;
+}
+.com-area-btn i { color: #c9b6ff; }
+.com-area-btn:hover { background: rgba(120, 140, 255, .25); }
+
+@media (prefers-reduced-motion: no-preference) {
+    .com-btn-grad, .com-btn-contorno, .com-chip, .com-area-btn { transition: filter .15s, background .15s; }
+}
