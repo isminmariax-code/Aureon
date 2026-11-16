@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+        <!-- CSS do site -->
+        <link href="./src/styles/reset.css" rel="stylesheet">
+        <link href="./src/styles/mainStyle.css" rel="stylesheet">
+
+        <style>
+            body.page-hab {
+                min-height: 100vh;
+                color: #fff;
+                background:
+                    radial-gradient(ellipse at 15% 10%, rgba(80, 90, 220, .35), transparent 55%),
+                    radial-gradient(ellipse at 90% 85%, rgba(170, 100, 230, .28), transparent 55%),
+                    linear-gradient(180deg, #0b1030 0%, #0e1238 100%);
+                background-attachment: fixed;
+            }
+            .nav-ativo { border-bottom: 2px solid #c9b6ff; }
+            .h-titulo { color: #cfd2ff; font-size: clamp(1.4rem, 3.2vw, 2.2rem); }
+            .h-sub { color: #aab2ff; }
+
+            .h-vidro {
+                height: 100%;
+                background: rgba(20, 26, 70, .55);
+                border: 1px solid rgba(140, 170, 255, .45);
+                border-radius: 16px;
+                box-shadow: 0 0 18px rgba(120, 140, 255, .18);
+                backdrop-filter: blur(6px);
+            }
+
+            /* Mapa de estrelas */
+            .mapa { position: relative; aspect-ratio: 16 / 8; min-height: 320px; }
+            .mapa svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+            .mapa line { stroke: rgba(170, 190, 255, .45); stroke-width: 1; vector-effect: non-scaling-stroke; }
+            .no {
+                position: absolute;
+                transform: translate(-50%, -50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: .2rem;
+                border: 0;
+                background: none;
+                color: #fff;
+                font-size: .9rem;
+                text-align: center;
+            }
+            .no i { font-size: 1.7rem; }
+            .no.aprendida i { color: #9fe6ff; text-shadow: 0 0 12px #9fe6ff; }
+            .no.progresso i { color: #ffcf5c; text-shadow: 0 0 12px #ffcf5c; }
+            .no.nova i { color: rgba(255, 255, 255, .4); }
+            .no.sel span { border-bottom: 2px solid #d6a8ff; }
+            .no:focus-visible, .h-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+            .legenda span { font-size: .85rem; color: #dfe3ff; }
+
+            /* Painel */
+            .h-barra { height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .15); overflow: hidden; }
+            .h-barra div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); }
+            .h-icone {
+                width: 40px; height: 40px; border-radius: 10px;
+                display: inline-flex; align-items: center; justify-content: center;
+                background: rgba(120, 140, 255, .25); border: 1px solid rgba(160, 190, 255, .5);
+                font-weight: 700; color: #cfd2ff;
+            }
+            .h-medalha { text-align: center; font-size: .72rem; line-height: 1.1; }
+            .h-medalha .h-icone { border-radius: 50%; width: 46px; height: 46px; margin-bottom: .3rem; border-color: #d6a8ff; color: #ffcf5c; }
+            .h-medalha.bloq { opacity: .45; }
+            .h-btn {
+                border: 1px solid #9fd8ff; border-radius: 999px; padding: .35rem 1rem;
+                color: #fff; background: transparent;
+            }
+            .h-btn:hover, .h-btn.ativo { background: rgba(159, 216, 255, .2); }
+            .h-mais { border: 0; border-radius: 6px; padding: 0 .5rem; font-size: .8rem; color: #14173f; background: #9fe6ff; }
+            .estrela { color: #ffcf5c; }
+
+            @media (max-width: 576px) {
+                .mapa { aspect-ratio: auto; min-height: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2rem; }
+                .mapa svg { display: none; }
+                .no { position: static; transform: none; width: 40%; }
+            }
+        </style>
+
+        <title>Minhas Habilidades - Aureon</title>
+    </head>
+
+    <body class="page-hab">
+        <!-- BARRA DE NAVEGAÇÃO -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="index.html">Aureon</a>
+                <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto text-primary">
+                        <li class="navbar-item"><a class="nav-link text-white" href="index.html">Explorar Cursos</a></li>
+                        <li class="navbar-item" aria-current="page"><a class="nav-link text-white nav-ativo" href="minhas-habilidades.html">Minhas Habilidades</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="comunidade.html">Comunidade</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="#">Como Funciona</a></li>
+                    </ul>
+
+                    <form class="d-flex">
+                        <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button"> Entrar </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button"> Criar Conta </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="container py-4">
+            <div class="text-center text-font-aureon-logo mb-3">
+                <p class="h-sub fs-5 mb-1">Mapa Interativo de Habilidades</p>
+                <h1 class="h-titulo">Seu Universo de Conhecimento</h1>
+            </div>
+
+            <div class="mapa mb-2" id="mapa"></div>
+            <div class="legenda d-flex flex-wrap justify-content-center gap-4 mb-2">
+                <span><i class="bi bi-star-fill" style="color:#9fe6ff"></i> Aprendida</span>
+                <span><i class="bi bi-star-fill" style="color:#ffcf5c"></i> Em progresso</span>
+                <span><i class="bi bi-star-fill" style="color:rgba(255,255,255,.4)"></i> Ainda não começou</span>
+            </div>
+            <p id="detalhe" class="text-center text-white-50 mb-5" role="status">Toque em uma estrela para ver os detalhes.</p>
+
+            <!-- PAINEL EVOLUTIVO -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fs-3 text-font-aureon-logo mb-0">Painel Evolutivo <i class="bi bi-stars"></i></h2>
+                <button id="btn-gerenciar" class="h-btn" type="button">Gerenciar Minhas Habilidades</button>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <section class="h-vidro p-3">
+                        <h3 class="h5 text-white mb-3">Habilidades Aprendidas</h3>
+                        <ul class="list-unstyled d-grid gap-3 mb-0">
+                            <li class="d-flex align-items-center gap-3"><span class="h-icone"><i class="bi bi-braces"></i></span> Python</li>
+                            <li class="d-flex align-items-center gap-3"><span class="h-icone"><i class="bi bi-vector-pen"></i></span> Figma</li>
+                            <li class="d-flex align-items-center gap-3"><span class="h-icone">Ae</span> After Effects</li>
+                            <li class="d-flex align-items-center gap-3"><span class="h-icone"><i class="bi bi-cpu"></i></span> IA Aplicada</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <section class="h-vidro p-3">
+                        <h3 class="h5 text-white mb-3">Habilidades em Progresso</h3>
+                        <div id="progressos" class="d-grid gap-3"></div>
+                    </section>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <section class="h-vidro p-3">
+                        <h3 class="h5 text-white mb-3">Habilidades Ensinadas</h3>
+                        <ul class="list-unstyled d-grid gap-3 mb-3">
+                            <li><div class="text-white">Módulo de mentoria da Maria</div><small class="text-white-50"><span class="estrela">★ 4.5</span> · 10 alunos</small></li>
+                            <li><div class="text-white">Python na Edição de Vídeo</div><small class="text-white-50"><span class="estrela">★ 4.5</span> · 16 alunos</small></li>
+                            <li><div class="text-white">Python para Design</div><small class="text-white-50"><span class="estrela">★ 4.5</span> · 12 alunos</small></li>
+                        </ul>
+                        <a href="comunidade.html" class="h-btn text-decoration-none d-inline-block">Ver Mais</a>
+                    </section>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <section class="h-vidro p-3">
+                        <h3 class="h5 text-white mb-3">Nível de Evolução e Conquistas</h3>
+                        <div class="d-flex justify-content-between mb-1"><strong>Nível 15</strong><small class="text-white-50">60% para o nível 16</small></div>
+                        <div class="h-barra mb-3" role="progressbar" aria-label="Progresso do nível" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><div style="width:60%"></div></div>
+                        <div id="medalhas" class="row row-cols-3 g-2"></div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
+            <ul class="nav col-md-4 mb-0 list-unstyled d-flex">
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Sobre nós </a></li>
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Termos de Serviço </a></li>
+            </ul>
+            <a href="index.html" class="col-md-4 mb-3 mb-md-0 me-md-auto text-logo-aureon d-flex align-items-center justify-content-center text-decoration-none text-font-aureon-logo">Aureon</a>
+            <ul class="nav fs-4 justify-content-end list-unstyled d-flex col-md-4">
+                <li class="ms-3"><a href="" class="bi bi-instagram"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-facebook"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-youtube"></a></li>
+            </ul>
+        </footer>
+
+        <script>
+            // x e y são a posição da estrela no mapa (em %)
+            const nos = [
+                { id: "prog",  nome: "Programação Criativa", x: 28, y: 18, estado: "aprendida" },
+                { id: "des",   nome: "Design de Interface",  x: 52, y: 14, estado: "aprendida" },
+                { id: "vid",   nome: "Edição de Vídeo",      x: 78, y: 20, estado: "aprendida" },
+                { id: "arte",  nome: "Arte Generativa",      x: 10, y: 28, estado: "progresso" },
+                { id: "esc",   nome: "Escrita Criativa",     x: 20, y: 66, estado: "nova" },
+                { id: "fil",   nome: "Filosofia Digital",    x: 40, y: 82, estado: "nova" },
+                { id: "emp",   nome: "Empreendedorismo",     x: 60, y: 72, estado: "nova" },
+                { id: "ia",    nome: "IA Aplicada",          x: 82, y: 66, estado: "aprendida" }
+            ];
+            const ligacoes = [["prog","des"],["des","vid"],["prog","arte"],["prog","esc"],["des","fil"],["des","emp"],["vid","ia"],["esc","fil"],["fil","emp"],["emp","ia"],["vid","emp"]];
+            const textos = {
+                aprendida: "Você já aprendeu essa habilidade.",
+                progresso: "Você está aprendendo essa habilidade agora.",
+                nova: "Você ainda não começou. Explore os cursos para dar o primeiro passo."
+            };
+            const progressos = [
+                { nome: "Curso de Figma", valor: 70 },
+                { nome: "Curso de Interface", valor: 90 },
+                { nome: "Curso de Arte Generativa", valor: 40 },
+                { nome: "Curso de Vídeo", valor: 70 }
+            ];
+            const medalhas = [
+                { nome: "Mestre do Python", icone: "bi-braces", ok: true },
+                { nome: "Ninja do Figma", icone: "bi-vector-pen", ok: true },
+                { nome: "Curador da Comunidade", icone: "bi-people-fill", ok: true },
+                { nome: "Sábio da Arte Generativa", icone: "bi-stars", ok: true },
+                { nome: "Mentor Dedicado", icone: "bi-mortarboard-fill", ok: true },
+                { nome: "Mestre do Vídeo", icone: "bi-camera-reels", ok: false }
+            ];
+            let gerenciar = false;
+
+            const $ = (id) => document.getElementById(id);
+            function criar(tag, classe, texto) {
+                const e = document.createElement(tag);
+                if (classe) e.className = classe;
+                if (texto !== undefined) e.textContent = texto;
+                return e;
+            }
+
+            function desenharMapa() {
+                const mapa = $("mapa");
+                const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute("viewBox", "0 0 100 100");
+                svg.setAttribute("preserveAspectRatio", "none");
+                svg.setAttribute("aria-hidden", "true");
+                ligacoes.forEach(([a, b]) => {
+                    const na = nos.find((n) => n.id === a), nb = nos.find((n) => n.id === b);
+                    const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    l.setAttribute("x1", na.x); l.setAttribute("y1", na.y);
+                    l.setAttribute("x2", nb.x); l.setAttribute("y2", nb.y);
+                    svg.appendChild(l);
+                });
+                mapa.appendChild(svg);
+
+                nos.forEach((n) => {
+                    const b = criar("button", "no " + n.estado);
+                    b.type = "button";
+                    b.style.left = n.x + "%";
+                    b.style.top = n.y + "%";
+                    b.innerHTML = '<i class="bi bi-star-fill"></i>';
+                    b.appendChild(criar("span", "", n.nome));
+                    b.onclick = () => {
+                        document.querySelectorAll(".no").forEach((x) => x.classList.remove("sel"));
+                        b.classList.add("sel");
+                        $("detalhe").textContent = n.nome + ": " + textos[n.estado];
+                    };
+                    mapa.appendChild(b);
+                });
+            }
+
+            function desenharProgressos() {
+                const box = $("progressos");
+                box.replaceChildren();
+                progressos.forEach((p) => {
+                    const item = criar("div", "");
+                    const topo = criar("div", "d-flex justify-content-between align-items-center mb-1");
+                    topo.appendChild(criar("small", "text-white", p.nome));
+                    const dir = criar("span", "d-flex align-items-center gap-2");
+                    dir.appendChild(criar("small", "text-white-50", p.valor + "%"));
+                    if (gerenciar && p.valor < 100) {
+                        const mais = criar("button", "h-mais", "+10%");
+                        mais.type = "button";
+                        mais.setAttribute("aria-label", "Aumentar progresso de " + p.nome);
+                        mais.onclick = () => { p.valor = Math.min(100, p.valor + 10); desenharProgressos(); };
+                        dir.appendChild(mais);
+                    }
+                    topo.appendChild(dir);
+                    const barra = criar("div", "h-barra");
+                    barra.setAttribute("role", "progressbar");
+                    barra.setAttribute("aria-label", p.nome);
+                    barra.setAttribute("aria-valuenow", p.valor);
+                    barra.setAttribute("aria-valuemin", 0);
+                    barra.setAttribute("aria-valuemax", 100);
+                    const preench = criar("div", "");
+                    preench.style.width = p.valor + "%";
+                    barra.appendChild(preench);
+                    item.append(topo, barra);
+                    box.appendChild(item);
+                });
+            }
+
+            function desenharMedalhas() {
+                const box = $("medalhas");
+                medalhas.forEach((m) => {
+                    const col = criar("div", "col");
+                    const med = criar("div", "h-medalha" + (m.ok ? "" : " bloq"));
+                    const ic = criar("span", "h-icone");
+                    ic.innerHTML = '<i class="bi ' + (m.ok ? m.icone : "bi-lock-fill") + '"></i>';
+                    med.append(ic, criar("div", "", m.nome));
+                    col.appendChild(med);
+                    box.appendChild(col);
+                });
+            }
+
+            $("btn-gerenciar").onclick = (e) => {
+                gerenciar = !gerenciar;
+                e.currentTarget.classList.toggle("ativo", gerenciar);
+                e.currentTarget.textContent = gerenciar ? "Concluir edição" : "Gerenciar Minhas Habilidades";
+                desenharProgressos();
+            };
+
+            desenharMapa();
+            desenharProgressos();
+            desenharMedalhas();
+        </script>
+    </body>
+</html>
