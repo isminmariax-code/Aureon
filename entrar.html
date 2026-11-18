@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <!-- Fonte do logo do Aureon (mesmos arquivos do site) -->
+        <link href="./src/styles/reset.css" rel="stylesheet">
+        <link href="./src/styles/mainStyle.css" rel="stylesheet">
+
+        <style>
+            *{box-sizing:border-box}
+            [hidden]{display:none!important}
+            body.lg-page{margin:0;min-height:100vh;color:#fff;font-family:"Segoe UI",system-ui,sans-serif;background:linear-gradient(180deg,#0b1030,#0e1238);overflow-x:hidden}
+
+            /* Fundo animado */
+            .lg-fundo{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+            .lg-onda{position:absolute;width:70vmax;height:28vmax;border-radius:50%;filter:blur(70px);opacity:.6}
+            .lg-onda.a{left:-20vmax;top:6vh;background:radial-gradient(closest-side,rgba(110,130,255,.7),transparent);animation:lg-a 16s ease-in-out infinite alternate}
+            .lg-onda.b{right:-20vmax;bottom:4vh;background:radial-gradient(closest-side,rgba(220,140,240,.6),transparent);animation:lg-b 20s ease-in-out infinite alternate}
+            @keyframes lg-a{to{transform:translate(14vmax,8vh) rotate(10deg) scale(1.15)}}
+            @keyframes lg-b{to{transform:translate(-14vmax,-8vh) rotate(-10deg) scale(1.1)}}
+            .lg-estrela{position:absolute;border-radius:50%;background:#fff;animation:lg-brilho var(--d,3s) ease-in-out var(--a,0s) infinite alternate}
+            @keyframes lg-brilho{from{opacity:.1;transform:scale(.6)}to{opacity:.95;transform:scale(1.3)}}
+            .lg-canto{position:fixed;right:1rem;bottom:1rem;font-size:2.2rem;color:rgba(255,255,255,.5);animation:lg-gira 14s linear infinite;z-index:0}
+            @keyframes lg-gira{to{transform:rotate(360deg)}}
+
+            /* Estrutura */
+            .lg-palco{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem;text-align:center}
+            .lg-logo{display:inline-block;font-size:2.6rem;color:#d8dcff;text-decoration:none;animation:lg-sobe .8s both}
+            .lg-titulo{margin:.5rem 0 1.4rem;font-size:clamp(1.4rem,4.5vw,2.3rem);font-weight:400;color:#cfd2ff;animation:lg-sobe .8s .1s both}
+            @keyframes lg-sobe{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+            .lg-cartao{text-align:left;padding:1.4rem;border-radius:20px;background:rgba(20,26,70,.6);border:1px solid rgba(150,185,255,.55);box-shadow:0 0 28px rgba(130,150,255,.25);backdrop-filter:blur(8px);animation:lg-sobe .8s .2s both}
+            .lg-tremer{animation:lg-treme .45s}
+            @keyframes lg-treme{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+            .lg-anim{animation:lg-entra .45s both}
+            @keyframes lg-entra{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+            .lg-h2{margin:0 0 1rem;font-size:1.15rem;font-weight:500;color:#e6e8ff}
+            .lg-h2:focus{outline:none}
+
+            /* Campos */
+            .lg-linha{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem}
+            @media(max-width:560px){.lg-linha{grid-template-columns:1fr}}
+            .lg-campo{position:relative;margin-bottom:.5rem}
+            .lg-campo input{width:100%;padding:1.35rem 2.3rem .35rem .15rem;font-size:1rem;color:#fff;background:transparent;border:0;border-bottom:2px solid;border-image:linear-gradient(90deg,#9fe6ff,#d6a8ff) 1;border-radius:0}
+            .lg-campo input[aria-invalid="true"]{border-image:linear-gradient(90deg,#ff8fb0,#ff6f91) 1}
+            .lg-campo input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 9999s}
+            .lg-campo label{position:absolute;left:.15rem;top:1.3rem;max-width:calc(100% - 2.4rem);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:rgba(255,255,255,.7);pointer-events:none;transform-origin:left;transition:transform .2s,color .2s}
+            .lg-campo input:focus+label,.lg-campo input:not(:placeholder-shown)+label,.lg-campo input:-webkit-autofill+label{transform:translateY(-1.15rem) scale(.78);color:#bfe9ff}
+            .lg-erro{min-height:1.2em;margin:.25rem 0 0;font-size:.82rem;color:#ffb3c7}
+            .lg-olho,.lg-ajuda{position:absolute;right:.1rem;top:1.05rem;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:50%;background:none;color:#cfd2ff;cursor:pointer}
+            .lg-ajuda{font-size:.8rem;font-weight:700;background:rgba(160,150,255,.5);color:#fff;width:20px;height:20px;top:1.3rem;right:.3rem}
+            .lg-dica{position:absolute;right:0;top:3rem;z-index:5;width:min(280px,90vw);padding:.6rem .8rem;border-radius:10px;font-size:.82rem;background:#12175a;border:1px solid #9fd8ff;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .2s,transform .2s,visibility 0s .2s}
+            .lg-dica.ver{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+            .lg-forca{height:4px;margin-top:.3rem;border-radius:4px;background:rgba(255,255,255,.15);overflow:hidden}
+            .lg-forca span{display:block;height:100%;width:0;border-radius:4px;transition:width .3s,background .3s}
+            .lg-forca-txt{margin:.2rem 0 0;font-size:.78rem;color:#cfd2ff;min-height:1.1em}
+
+            /* Opções */
+            .lg-vh{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+            .lg-grupo{border:0;padding:0;margin:.6rem 0;min-width:0}
+            .lg-grupo legend{padding:0;margin-bottom:.5rem;color:#e6e8ff}
+            .lg-pilulas{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+            .lg-pilula{cursor:pointer}
+            .lg-pilula span{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:999px;border:1px solid rgba(160,190,255,.6);transition:all .25s}
+            .lg-pilula span::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid #aab2ff;transition:all .25s}
+            .lg-pilula input:checked+span{background:rgba(130,120,240,.3);border-color:#d6a8ff;box-shadow:0 0 14px rgba(214,168,255,.5)}
+            .lg-pilula input:checked+span::before{background:#d6a8ff;border-color:#fff}
+            .lg-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:.6rem}
+            .lg-tile{position:relative;cursor:pointer;animation:lg-sobe .5s both;animation-delay:calc(var(--i)*45ms)}
+            .lg-tile span{display:flex;flex-direction:column;align-items:center;gap:.25rem;height:100%;padding:.6rem .3rem;border-radius:12px;font-size:.78rem;text-align:center;line-height:1.15;background:rgba(10,14,45,.45);border:1px solid rgba(160,190,255,.45);transition:all .25s}
+            .lg-tile span i{font-size:1.4rem;color:#c9b6ff}
+            .lg-tile span::after{content:"\2713";position:absolute;top:4px;right:6px;font-size:.8rem;color:#14173f;width:16px;height:16px;line-height:16px;text-align:center;border-radius:4px;background:#9fe6ff;transform:scale(0);transition:transform .25s}
+            .lg-tile:hover span{transform:translateY(-3px);border-color:#9fd8ff}
+            .lg-tile input:checked+span{border-color:#d6a8ff;background:rgba(120,100,230,.28);box-shadow:0 0 14px rgba(214,168,255,.55)}
+            .lg-tile input:checked+span::after{transform:scale(1)}
+            .lg-pilula input:focus-visible+span,.lg-tile input:focus-visible+span,.lg-campo input:focus-visible,.lg-btn:focus-visible,.lg-link:focus-visible,.lg-olho:focus-visible,.lg-ajuda:focus-visible{outline:2px solid #fff;outline-offset:3px}
+            .lg-recolher{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .4s ease,opacity .3s}
+            .lg-recolher>div{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s linear .4s}
+            .lg-recolher.aberto{grid-template-rows:1fr;opacity:1}
+            .lg-recolher.aberto>div{visibility:visible;transition-delay:0s}
+
+            /* Botões */
+            .lg-acoes{display:flex;gap:.8rem;margin-top:1.2rem}
+            .lg-acoes>*{flex:1}
+            .lg-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem 1rem;border-radius:999px;font-size:1rem;font-family:inherit;text-decoration:none;cursor:pointer;color:#fff;background:transparent;border:1px solid #9fd8ff;transition:transform .2s,filter .2s,background .2s}
+            .lg-btn:hover{transform:translateY(-2px);background:rgba(159,216,255,.15)}
+            .lg-grad{border:0;font-weight:600;color:#14173f;background:linear-gradient(90deg,#9fe6ff,#d6a8ff)}
+            .lg-grad:hover{background:linear-gradient(90deg,#9fe6ff,#d6a8ff);filter:brightness(1.08)}
+            .lg-grad::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);transform:translateX(-120%)}
+            .lg-grad:hover::after{transform:translateX(120%);transition:transform .7s}
+            .lg-btn:disabled{opacity:.75;cursor:progress;transform:none}
+            .lg-giro{display:none;width:16px;height:16px;border-radius:50%;border:2px solid #14173f;border-top-color:transparent;animation:lg-gira .7s linear infinite}
+            .lg-btn[aria-busy="true"] .lg-giro{display:inline-block}
+            .lg-link{padding:0;border:0;background:none;color:#9fd8ff;font:inherit;text-decoration:underline;cursor:pointer}
+            .lg-troca{margin:1.2rem 0 0;text-align:center;color:#dfe3ff}
+            .lg-info{min-height:1.2em;margin:.4rem 0 0;font-size:.85rem;color:#bfe9ff}
+            .lg-nota{margin:1rem 0 0;font-size:.8rem;text-align:center;color:rgba(255,255,255,.6)}
+            .lg-ok{text-align:center;padding:.5rem 0}
+            .lg-ok svg{width:84px;height:84px}
+            .lg-ok circle,.lg-ok path{fill:none;stroke:#9fe6ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:200;stroke-dashoffset:200;animation:lg-traco .8s .1s forwards}
+            .lg-ok path{animation-delay:.6s;animation-duration:.5s}
+            @keyframes lg-traco{to{stroke-dashoffset:0}}
+
+            @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}}
+        </style>
+
+        <title>Entrar - Aureon</title>
+    </head>
+
+    <body class="lg-page">
+        <div class="lg-fundo" id="fundo" aria-hidden="true"><div class="lg-onda a"></div><div class="lg-onda b"></div></div>
+        <i class="bi bi-stars lg-canto" aria-hidden="true"></i>
+
+        <main class="lg-palco">
+            <a class="lg-logo text-font-aureon-logo" href="index.html">Aureon</a>
+            <h1 class="lg-titulo text-font-aureon-logo" id="titulo"></h1>
+            <noscript><p>Ative o JavaScript do navegador para usar esta página.</p></noscript>
+
+            <div class="lg-cartao">
+                <div id="tremor">
+
+                    <!-- ENTRAR -->
+                    <section id="vista-login" class="lg-vista">
+                        <h2 class="lg-h2" tabindex="-1">Entrar na sua conta</h2>
+                        <form id="form-login" novalidate>
+                            <div class="lg-campo">
+                                <input id="l-email" type="email" placeholder=" " autocomplete="email" maxlength="254" required aria-describedby="e-lemail">
+                                <label for="l-email">E-mail</label>
+                                <p class="lg-erro" id="e-lemail" aria-live="polite"></p>
+                            </div>
+                            <div class="lg-campo">
+                                <input id="l-senha" type="password" placeholder=" " autocomplete="current-password" maxlength="128" required aria-describedby="e-lsenha">
+                                <label for="l-senha">Senha</label>
+                                <button type="button" class="lg-olho" data-alvo="l-senha" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                                <p class="lg-erro" id="e-lsenha" aria-live="polite"></p>
+                            </div>
+                            <button type="button" class="lg-link" id="btn-esqueci">Esqueci minha senha</button>
+                            <p class="lg-info" id="aviso-login" aria-live="polite"></p>
+                            <div class="lg-acoes">
+                                <a class="lg-btn" href="index.html">Voltar</a>
+                                <button type="submit" class="lg-btn lg-grad" id="btn-login" data-rotulo="Entrar"><span class="lg-giro" aria-hidden="true"></span><span class="lg-rot">Entrar</span></button>
+                            </div>
+                            <p class="lg-troca">Ainda não tem conta? <button type="button" class="lg-link" data-vista="cadastro">Criar conta</button></p>
+                        </form>
+                    </section>
+
+                    <!-- CRIAR CONTA -->
+                    <section id="vista-cadastro" class="lg-vista" hidden>
+                        <h2 class="lg-h2" tabindex="-1">Passo 1: Identificação e Perfil</h2>
+                        <form id="form-cadastro" novalidate>
+                            <fieldset class="lg-grupo">
+                                <legend class="lg-vh">Tipo de conta</legend>
+                                <div class="lg-pilulas">
+                                    <label class="lg-pilula"><input class="lg-vh" type="radio" name="tipo" value="aluno" checked><span>Criar Conta de Aluno(a)</span></label>
+                                    <label class="lg-pilula"><input class="lg-vh" type="radio" name="tipo" value="professor"><span>Criar Conta de Professor(a)</span></label>
+                                </div>
+                            </fieldset>
+
+                            <div class="lg-linha">
+                                <div class="lg-campo">
+                                    <input id="c-nome" type="text" placeholder=" " autocomplete="name" maxlength="100" required aria-describedby="e-nome">
+                                    <label for="c-nome">Nome Completo</label>
+                                    <p class="lg-erro" id="e-nome" aria-live="polite"></p>
+                                </div>
+                                <div class="lg-campo">
+                                    <input id="c-email" type="email" placeholder=" " autocomplete="email" maxlength="254" required aria-describedby="e-email">
+                                    <label for="c-email">E-mail</label>
+                                    <p class="lg-erro" id="e-email" aria-live="polite"></p>
+                                </div>
+                            </div>
+
+                            <div class="lg-campo">
+                                <input id="c-cpf" type="text" inputmode="numeric" placeholder=" " autocomplete="off" maxlength="14" aria-describedby="e-cpf dica-cpf">
+                                <label for="c-cpf">CPF <span id="cpf-nota">(opcional para Aluno)</span></label>
+                                <button type="button" class="lg-ajuda" id="btn-cpf" aria-label="Por que pedimos o CPF?" aria-expanded="false">?</button>
+                                <div class="lg-dica" id="dica-cpf" role="tooltip">Para professores, o CPF é obrigatório e serve para validar a emissão de certificados. Para alunos é opcional, mas necessário se você quiser receber certificados.</div>
+                                <p class="lg-erro" id="e-cpf" aria-live="polite"></p>
+                            </div>
+
+                            <div class="lg-linha">
+                                <div class="lg-campo">
+                                    <input id="c-senha" type="password" placeholder=" " autocomplete="new-password" maxlength="128" required aria-describedby="e-senha forca-txt">
+                                    <label for="c-senha">Senha</label>
+                                    <button type="button" class="lg-olho" data-alvo="c-senha" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                                    <div class="lg-forca" aria-hidden="true"><span id="forca-barra"></span></div>
+                                    <p class="lg-forca-txt" id="forca-txt" aria-live="polite"></p>
+                                    <p class="lg-erro" id="e-senha" aria-live="polite"></p>
+                                </div>
+                                <div class="lg-campo">
+                                    <input id="c-conf" type="password" placeholder=" " autocomplete="new-password" maxlength="128" required aria-describedby="e-conf">
+                                    <label for="c-conf">Confirmar Senha</label>
+                                    <button type="button" class="lg-olho" data-alvo="c-conf" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                                    <p class="lg-erro" id="e-conf" aria-live="polite"></p>
+                                </div>
+                            </div>
+
+                            <fieldset class="lg-grupo">
+                                <legend>Escolha Seus Interesses e Áreas Favoritas</legend>
+                                <div class="lg-grade" id="tiles-interesses"></div>
+                                <p class="lg-erro" id="e-interesses" aria-live="polite"></p>
+                            </fieldset>
+
+                            <div class="lg-recolher" id="bloco-ensino"><div>
+                                <fieldset class="lg-grupo">
+                                    <legend>Matérias Disponíveis para Ensinar</legend>
+                                    <div class="lg-grade" id="tiles-ensino"></div>
+                                    <p class="lg-erro" id="e-ensino" aria-live="polite"></p>
+                                </fieldset>
+                            </div></div>
+
+                            <p class="lg-erro" id="resumo-cadastro" aria-live="polite"></p>
+                            <div class="lg-acoes">
+                                <a class="lg-btn" href="index.html">Voltar</a>
+                                <button type="submit" class="lg-btn lg-grad" id="btn-cadastro" data-rotulo="Criar Minha Conta"><span class="lg-giro" aria-hidden="true"></span><span class="lg-rot">Criar Minha Conta</span></button>
+                            </div>
+                            <p class="lg-troca">Já tem uma conta? <button type="button" class="lg-link" data-vista="login">Entrar</button></p>
+                        </form>
+                    </section>
+
+                    <!-- SUCESSO -->
+                    <section id="vista-sucesso" class="lg-vista" hidden>
+                        <div class="lg-ok">
+                            <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34"/><path d="M26 41 l10 10 l19 -22"/></svg>
+                            <h2 class="lg-h2" tabindex="-1" id="ok-titulo"></h2>
+                            <p id="ok-msg"></p>
+                            <div class="lg-acoes">
+                                <a class="lg-btn lg-grad" href="explorar-cursos.html">Explorar cursos</a>
+                                <a class="lg-btn" href="index.html">Ir para o início</a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+            <p class="lg-nota">Esta é uma versão de demonstração: nenhum dado é enviado ou salvo.</p>
+        </main>
+
+        <script>
+        (() => {
+            "use strict";
+            const $ = (id) => document.getElementById(id);
+            const AREAS = [["Programação Criativa", "bi-braces"], ["Design de Interface", "bi-hand-index-thumb"], ["Arte Generativa", "bi-stars"], ["Edição de Vídeo", "bi-camera-reels"], ["Música Digital", "bi-music-note-beamed"], ["Web3", "bi-link-45deg"], ["Gestão Ágil", "bi-kanban"], ["Psicologia Cognitiva", "bi-lightbulb"]];
+            const TITULOS = { login: "Bem-vindo(a) de volta ✨ Vamos continuar descobrindo?", cadastro: "Olá ✨ Vamos descobrir novos caminhos juntos?", sucesso: "Tudo pronto ✨" };
+            const vistas = { login: $("vista-login"), cadastro: $("vista-cadastro"), sucesso: $("vista-sucesso") };
+            const ehProfessor = () => document.querySelector('input[name="tipo"]:checked').value === "professor";
+
+            // Estrelas do fundo
+            for (let i = 0; i < 46; i++) {
+                const s = document.createElement("span");
+                const t = 1 + Math.random() * 2;
+                s.className = "lg-estrela";
+                s.style.cssText = "left:" + Math.random() * 100 + "%;top:" + Math.random() * 100 + "%;width:" + t + "px;height:" + t + "px;--d:" + (2 + Math.random() * 3) + "s;--a:" + Math.random() * 3 + "s";
+                $("fundo").appendChild(s);
+            }
+
+            // Cartões de área
+            function criarTiles(destino, nome) {
+                AREAS.forEach(([area, icone], i) => {
+                    const l = document.createElement("label");
+                    l.className = "lg-tile";
+                    l.style.setProperty("--i", i);
+                    const inp = document.createElement("input");
+                    inp.type = "checkbox"; inp.name = nome; inp.value = area; inp.className = "lg-vh";
+                    inp.addEventListener("change", () => { if ($("e-" + nome).textContent) validarGrupo(nome); });
+                    const sp = document.createElement("span");
+                    sp.innerHTML = '<i class="bi ' + icone + '" aria-hidden="true"></i>';
+                    sp.appendChild(document.createTextNode(area));
+                    l.append(inp, sp);
+                    $(destino).appendChild(l);
+                });
+            }
+            criarTiles("tiles-interesses", "interesses");
+            criarTiles("tiles-ensino", "ensino");
+
+            // Regras de validação (cada uma devolve a mensagem de erro, ou "" se estiver certo)
+            function cpfValido(v) {
+                const d = v.replace(/\D/g, "");
+                if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false;
+                const dv = (n) => { let s = 0; for (let i = 0; i < n; i++) s += Number(d[i]) * (n + 1 - i); const r = (s * 10) % 11; return r === 10 ? 0 : r; };
+                return dv(9) === Number(d[9]) && dv(10) === Number(d[10]);
+            }
+            const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+            function forca(s) {
+                let p = 0;
+                if (s.length >= 8) p++;
+                if (s.length >= 12) p++;
+                if (/[a-z]/.test(s) && /[A-Z]/.test(s)) p++;
+                if (/\d/.test(s)) p++;
+                if (/[^A-Za-z0-9]/.test(s)) p++;
+                return s ? (p <= 2 ? 1 : p === 3 ? 2 : 3) : 0;
+            }
+            const campos = {
+                cadastro: [
+                    { id: "c-nome", erro: "e-nome", fn: (v) => /\d/.test(v) ? "Use apenas letras no nome." : v.trim().split(/\s+/).filter((p) => p.length >= 2).length < 2 ? "Digite nome e sobrenome." : "" },
+                    { id: "c-email", erro: "e-email", fn: (v) => emailOk(v) ? "" : "Digite um e-mail válido, como nome@email.com." },
+                    { id: "c-cpf", erro: "e-cpf", fn: (v) => !v.trim() ? (ehProfessor() ? "O CPF é obrigatório para professores." : "") : cpfValido(v) ? "" : "CPF inválido. Confira os números." },
+                    { id: "c-senha", erro: "e-senha", fn: (v) => v.length >= 8 && /[A-Za-z]/.test(v) && /\d/.test(v) ? "" : "Use pelo menos 8 caracteres, com letras e números." },
+                    { id: "c-conf", erro: "e-conf", fn: (v) => v && v === $("c-senha").value ? "" : "As senhas não são iguais." }
+                ],
+                login: [
+                    { id: "l-email", erro: "e-lemail", fn: (v) => emailOk(v) ? "" : "Digite um e-mail válido." },
+                    { id: "l-senha", erro: "e-lsenha", fn: (v) => v ? "" : "Digite a sua senha." }
+                ]
+            };
+            function validarCampo(c) {
+                const inp = $(c.id), msg = c.fn(inp.value);
+                $(c.erro).textContent = msg;
+                if (msg) inp.setAttribute("aria-invalid", "true"); else inp.removeAttribute("aria-invalid");
+                return !msg;
+            }
+            function validarGrupo(nome) {
+                if (nome === "ensino" && !ehProfessor()) { $("e-ensino").textContent = ""; return true; }
+                const ok = document.querySelectorAll('input[name="' + nome + '"]:checked').length > 0;
+                $("e-" + nome).textContent = ok ? "" : nome === "ensino" ? "Escolha pelo menos uma matéria para ensinar." : "Escolha pelo menos um interesse.";
+                return ok;
+            }
+            Object.values(campos).flat().forEach((c) => {
+                const inp = $(c.id);
+                inp.addEventListener("blur", () => { if (inp.value || inp.hasAttribute("aria-invalid")) validarCampo(c); });
+                inp.addEventListener("input", () => { if (inp.hasAttribute("aria-invalid")) validarCampo(c); });
+            });
+            $("c-senha").addEventListener("input", (e) => {
+                const n = forca(e.target.value);
+                const cor = ["transparent", "#ff8fb0", "#ffcf5c", "#7be0a6"][n];
+                $("forca-barra").style.width = n * 33.4 + "%";
+                $("forca-barra").style.background = cor;
+                $("forca-txt").textContent = n ? "Força da senha: " + ["", "fraca", "média", "forte"][n] : "";
+                if ($("c-conf").value) validarCampo(campos.cadastro[4]);
+            });
+
+            // CPF: máscara que mantém o cursor no lugar
+            $("c-cpf").addEventListener("input", (e) => {
+                const inp = e.target;
+                const antes = inp.value.slice(0, inp.selectionStart ?? inp.value.length).replace(/\D/g, "").length;
+                const d = inp.value.replace(/\D/g, "").slice(0, 11);
+                let out = d.slice(0, 3);
+                if (d.length > 3) out += "." + d.slice(3, 6);
+                if (d.length > 6) out += "." + d.slice(6, 9);
+                if (d.length > 9) out += "-" + d.slice(9, 11);
+                inp.value = out;
+                let pos = antes === 0 ? 0 : out.length, cont = 0;
+                if (antes > 0) for (let i = 0; i < out.length; i++) { if (/\d/.test(out[i])) cont++; if (cont === antes) { pos = i + 1; break; } }
+                try { inp.setSelectionRange(pos, pos); } catch (err) { /* sem problema */ }
+            });
+
+            // Dica do CPF
+            const dica = $("dica-cpf"), btnCpf = $("btn-cpf");
+            const abrirDica = (v) => { dica.classList.toggle("ver", v); btnCpf.setAttribute("aria-expanded", v); };
+            btnCpf.addEventListener("click", () => abrirDica(!dica.classList.contains("ver")));
+            btnCpf.addEventListener("mouseenter", () => abrirDica(true));
+            btnCpf.addEventListener("mouseleave", () => abrirDica(false));
+            btnCpf.addEventListener("focus", () => abrirDica(true));
+            btnCpf.addEventListener("blur", () => abrirDica(false));
+            document.addEventListener("keydown", (e) => { if (e.key === "Escape") abrirDica(false); });
+
+            // Mostrar / ocultar senha
+            document.querySelectorAll(".lg-olho").forEach((b) => b.addEventListener("click", () => {
+                const inp = $(b.dataset.alvo), ver = inp.type === "password";
+                inp.type = ver ? "text" : "password";
+                b.setAttribute("aria-pressed", ver);
+                b.setAttribute("aria-label", ver ? "Ocultar senha" : "Mostrar senha");
+                b.firstElementChild.className = "bi " + (ver ? "bi-eye-slash" : "bi-eye");
+            }));
+
+            // Aluno(a) ou Professor(a)
+            function aplicarTipo() {
+                const prof = ehProfessor();
+                $("bloco-ensino").classList.toggle("aberto", prof);
+                $("cpf-nota").textContent = prof ? "(obrigatório para Professor)" : "(opcional para Aluno)";
+                $("c-cpf").required = prof;
+                if (!prof) $("e-ensino").textContent = "";
+                if ($("c-cpf").value || $("c-cpf").hasAttribute("aria-invalid")) validarCampo(campos.cadastro[2]);
+            }
+            document.querySelectorAll('input[name="tipo"]').forEach((r) => r.addEventListener("change", aplicarTipo));
+
+            // Telas
+            function mostrarVista(nome, foco, hash) {
+                Object.keys(vistas).forEach((k) => { vistas[k].hidden = k !== nome; });
+                const v = vistas[nome];
+                v.classList.remove("lg-anim"); void v.offsetWidth; v.classList.add("lg-anim");
+                $("titulo").textContent = TITULOS[nome];
+                document.title = (nome === "cadastro" ? "Criar conta" : nome === "login" ? "Entrar" : "Tudo pronto") + " - Aureon";
+                if (hash && nome !== "sucesso") { try { history.replaceState(null, "", nome === "cadastro" ? "#cadastro" : "#entrar"); } catch (e) { /* sem problema */ } }
+                if (foco) v.querySelector(".lg-h2").focus({ preventScroll: true });
+            }
+            document.querySelectorAll("[data-vista]").forEach((b) => b.addEventListener("click", () => mostrarVista(b.dataset.vista, true, true)));
+            window.addEventListener("hashchange", () => mostrarVista(location.hash === "#cadastro" ? "cadastro" : "login", true, false));
+
+            // Envio (simulado)
+            let ocupado = false;
+            function tremer() { const t = $("tremor"); t.classList.remove("lg-tremer"); void t.offsetWidth; t.classList.add("lg-tremer"); }
+            function simular(botao, fim) {
+                if (ocupado) return;
+                ocupado = true;
+                botao.disabled = true;
+                botao.setAttribute("aria-busy", "true");
+                botao.querySelector(".lg-rot").textContent = "Aguarde…";
+                setTimeout(() => {
+                    ocupado = false;
+                    botao.disabled = false;
+                    botao.removeAttribute("aria-busy");
+                    botao.querySelector(".lg-rot").textContent = botao.dataset.rotulo;
+                    fim();
+                }, 900);
+            }
+            function sucesso(titulo, msg) {
+                $("ok-titulo").textContent = titulo;
+                $("ok-msg").textContent = msg;
+                mostrarVista("sucesso", true, false);
+            }
+            function falhou(invalidos, resumo) {
+                tremer();
+                if (resumo) resumo.textContent = invalidos.length === 1 ? "Corrija 1 campo para continuar." : "Corrija " + invalidos.length + " campos para continuar.";
+                const primeiro = invalidos[0];
+                if (primeiro) primeiro.focus();
+            }
+
+            $("form-cadastro").addEventListener("submit", (e) => {
+                e.preventDefault();
+                if (ocupado) return;
+                const invalidos = [];
+                campos.cadastro.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
+                if (!validarGrupo("interesses")) invalidos.push(document.querySelector('input[name="interesses"]'));
+                if (!validarGrupo("ensino")) invalidos.push(document.querySelector('input[name="ensino"]'));
+                $("resumo-cadastro").textContent = "";
+                if (invalidos.length) { falhou(invalidos, $("resumo-cadastro")); return; }
+                const nome = $("c-nome").value.trim().split(/\s+/)[0];
+                const prof = ehProfessor();
+                simular($("btn-cadastro"), () => {
+                    $("form-cadastro").reset();
+                    document.querySelectorAll("#form-cadastro [aria-invalid]").forEach((i) => i.removeAttribute("aria-invalid"));
+                    document.querySelectorAll(".lg-erro").forEach((p) => { p.textContent = ""; });
+                    $("forca-barra").style.width = "0"; $("forca-txt").textContent = "";
+                    document.querySelectorAll(".lg-olho").forEach((b) => { $(b.dataset.alvo).type = "password"; b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-label", "Mostrar senha"); b.firstElementChild.className = "bi bi-eye"; });
+                    aplicarTipo();
+                    sucesso("Conta criada, " + nome + "!", "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " foi criada na versão de demonstração. Nenhum dado foi enviado ou salvo.");
+                });
+            });
+
+            $("form-login").addEventListener("submit", (e) => {
+                e.preventDefault();
+                if (ocupado) return;
+                const invalidos = [];
+                campos.login.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
+                $("aviso-login").textContent = "";
+                if (invalidos.length) { falhou(invalidos); return; }
+                simular($("btn-login"), () => {
+                    $("l-senha").value = "";
+                    sucesso("Tudo certo!", "Login de demonstração: ainda não existe servidor de contas, então nada foi verificado ou salvo.");
+                });
+            });
+            $("btn-esqueci").addEventListener("click", () => { $("aviso-login").textContent = "Na versão final, enviaremos um link de recuperação para o seu e-mail."; });
+
+            aplicarTipo();
+            mostrarVista(location.hash === "#cadastro" ? "cadastro" : "login", false, false);
+        })();
+        </script>
+    </body>
+</html>
