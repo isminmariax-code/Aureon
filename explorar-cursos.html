@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+        <!-- CSS do site -->
+        <link href="./src/styles/reset.css" rel="stylesheet">
+        <link href="./src/styles/mainStyle.css" rel="stylesheet">
+
+        <style>
+            body.page-exp {
+                min-height: 100vh;
+                color: #fff;
+                background:
+                    radial-gradient(ellipse at 12% 8%, rgba(80, 90, 220, .35), transparent 55%),
+                    radial-gradient(ellipse at 90% 85%, rgba(170, 100, 230, .28), transparent 55%),
+                    linear-gradient(180deg, #0b1030 0%, #0e1238 100%);
+                background-attachment: fixed;
+            }
+            .nav-ativo { border-bottom: 2px solid #c9b6ff; }
+            .exp-titulo-pag { color: #cfd2ff; font-size: clamp(1.8rem, 4vw, 2.8rem); }
+            .exp-vidro {
+                background: rgba(20, 26, 70, .55);
+                border: 1px solid rgba(140, 170, 255, .45);
+                border-radius: 16px;
+                box-shadow: 0 0 18px rgba(120, 140, 255, .18);
+                backdrop-filter: blur(6px);
+            }
+            .exp-input {
+                background: rgba(10, 14, 45, .7); color: #fff;
+                border: 1px solid rgba(140, 170, 255, .45);
+            }
+            .exp-input::placeholder { color: rgba(255, 255, 255, .55); }
+            .exp-input:focus { background: rgba(10, 14, 45, .85); color: #fff; border-color: #9fd8ff; box-shadow: 0 0 0 .2rem rgba(159, 216, 255, .25); }
+            select.exp-input option { color: #000; }
+
+            .exp-grad, .exp-contorno, .exp-chip {
+                border-radius: 999px; padding: .35rem 1rem; font-size: .9rem; color: #fff; background: transparent;
+                border: 1px solid #9fd8ff;
+            }
+            .exp-grad { border: 0; font-weight: 600; color: #14173f; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); }
+            .exp-grad:hover { filter: brightness(1.1); }
+            .exp-contorno:hover, .exp-chip:hover { background: rgba(159, 216, 255, .18); }
+            .exp-chip { border-color: rgba(160, 190, 255, .7); }
+            .exp-chip.ativo, .exp-contorno.ativo { color: #14173f; font-weight: 600; border-color: transparent; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); }
+            button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+            .exp-card { padding: 1rem; display: flex; flex-direction: column; }
+            .exp-card .acoes { margin-top: auto; }
+            .exp-topo {
+                height: 84px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+                font-size: 2.4rem; color: #fff; background: linear-gradient(135deg, rgba(90, 110, 255, .6), rgba(200, 120, 230, .55));
+            }
+            .exp-titulo { background: none; border: 0; padding: 0; margin-top: .75rem; color: #fff; font-weight: 600; font-size: 1.05rem; text-align: left; }
+            .exp-titulo:hover { text-decoration: underline; }
+            .exp-tag { border: 1px solid rgba(160, 190, 255, .6); border-radius: 999px; padding: .05rem .6rem; font-size: .78rem; color: #dfe3ff; }
+            .exp-motivo { font-size: .88rem; color: #cfd2ff; }
+
+            .exp-par { display: flex; align-items: center; justify-content: center; gap: .6rem; flex-wrap: wrap; }
+            .exp-par .linha { flex: 1 1 30px; max-width: 80px; height: 2px; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); }
+            .exp-par .meio { color: #14173f; font-weight: 600; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); border-radius: 999px; padding: .2rem .8rem; }
+
+            .exp-caminho { display: flex; flex-wrap: wrap; gap: .6rem; align-items: stretch; }
+            .exp-passo { position: relative; padding: .6rem .9rem; min-width: 120px; border-radius: 12px; border: 1px solid rgba(160, 190, 255, .55); background: rgba(10, 14, 45, .5); text-align: center; }
+            .exp-passo:not(:last-child)::after { content: "→"; position: absolute; right: -.75rem; top: 50%; transform: translateY(-50%); color: #9fd8ff; }
+            .exp-passo .num { color: #ffcf5c; font-weight: 700; }
+            .exp-passo .pre { display: none; font-size: .78rem; color: #cfd2ff; }
+            .mostrar-pre .exp-passo .pre { display: block; }
+
+            details > summary { cursor: pointer; color: #9fd8ff; margin-top: .6rem; }
+            .exp-lista li { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .25rem 0; border-bottom: 1px solid rgba(160, 190, 255, .2); }
+            .exp-lista button { border: 0; background: none; color: #ff9bbd; font-size: .8rem; }
+
+            .exp-modal { background: #12175a; color: #fff; border: 1px solid rgba(140, 170, 255, .5); border-radius: 16px; }
+            .exp-aviso { position: fixed; left: 1rem; bottom: 1rem; z-index: 2000; max-width: 320px; padding: .6rem 1rem; border-radius: 12px; background: #1d2380; border: 1px solid #9fd8ff; opacity: 0; pointer-events: none; transition: opacity .2s; }
+            .exp-aviso.ver { opacity: 1; }
+            .exp-ia-btn { position: fixed; right: 1rem; bottom: 1rem; z-index: 1500; width: 56px; height: 56px; border-radius: 50%; border: 1px solid #9fd8ff; background: #1d2380; color: #fff; font-size: 1.4rem; }
+            .exp-ia-box { position: fixed; right: 1rem; bottom: 5rem; z-index: 1500; max-width: 260px; padding: .8rem 1rem; }
+
+            @media (prefers-reduced-motion: reduce) { .exp-aviso { transition: none; } }
+        </style>
+
+        <title>Explorar Cursos - Aureon</title>
+    </head>
+
+    <body class="page-exp">
+        <!-- BARRA DE NAVEGAÇÃO -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="index.html">Aureon</a>
+                <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto text-primary">
+                        <li class="navbar-item" aria-current="page"><a class="nav-link text-white nav-ativo" href="explorar-cursos.html">Explorar Cursos</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="minhas-habilidades.html">Minhas Habilidades</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="comunidade.html">Comunidade</a></li>
+                        <li class="navbar-item"><a class="nav-link text-white" href="#">Como Funciona</a></li>
+                    </ul>
+                    <form class="d-flex">
+                        <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button"> Entrar </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button"> Criar Conta </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container py-4">
+            <header class="text-center text-font-aureon-logo mb-4">
+                <h1 class="exp-titulo-pag mb-1">Explorar Cursos</h1>
+                <p class="fs-5" style="color:#aab2ff">Seu próximo conhecimento pode estar onde você menos espera.</p>
+            </header>
+
+            <!-- PESQUISA -->
+            <section class="exp-vidro p-3 mb-3" aria-label="Pesquisa">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <input id="q" class="form-control exp-input flex-grow-1" type="search" maxlength="100" placeholder="Qual conhecimento você gostaria de descobrir hoje?" aria-label="Pesquisar cursos">
+                    <button id="b-pesq" class="exp-grad" type="button">Pesquisar</button>
+                    <button id="b-limpar-q" class="exp-contorno" type="button" hidden>Limpar pesquisa</button>
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <button id="m-pergunta" class="exp-chip" type="button" aria-pressed="false">Pesquisar por pergunta</button>
+                    <button id="m-habilidade" class="exp-chip" type="button" aria-pressed="false">Por habilidade</button>
+                    <small id="dica" class="text-white-50"></small>
+                </div>
+            </section>
+
+            <!-- FILTROS INTELIGENTES -->
+            <section class="exp-vidro p-3 mb-4" aria-label="Filtros">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <select id="f-nivel" class="form-select exp-input w-auto" aria-label="Nível">
+                        <option value="">Nível: todos</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option>
+                    </select>
+                    <select id="f-dur" class="form-select exp-input w-auto" aria-label="Duração">
+                        <option value="">Duração: todas</option><option value="1h">Até 1 hora</option><option value="5h">1 a 5 horas</option><option value="5h+">Mais de 5 horas</option>
+                    </select>
+                    <button id="b-limpar-f" class="exp-contorno" type="button" hidden>Limpar filtros</button>
+                </div>
+                <div id="inteligentes" class="d-flex flex-wrap gap-2"></div>
+            </section>
+
+            <!-- RESULTADOS -->
+            <section id="sec-res" class="mb-4" hidden aria-live="polite">
+                <h2 id="res-titulo" class="h4 mb-3"></h2>
+                <div id="res-grade" class="row g-3"></div>
+            </section>
+
+            <!-- RECOMENDADOS -->
+            <section class="exp-vidro p-3 mb-4">
+                <h2 class="h4 mb-3 text-font-aureon-logo">Recomendados para Você</h2>
+                <div id="rec-grade" class="row g-3"></div>
+            </section>
+
+            <!-- DESCUBRA ALGO NOVO -->
+            <div class="row g-3 mb-4">
+                <section class="col-lg-6">
+                    <div class="exp-vidro p-3 h-100">
+                        <h2 class="h4 mb-3 text-font-aureon-logo">Descubra Algo Novo</h2>
+                        <div class="text-center mb-3"><button id="b-surpresa" class="exp-grad fs-5 px-4" type="button">Surpreenda-me</button></div>
+                        <div id="desc-box" hidden>
+                            <h3 id="desc-assunto" class="h5"></h3>
+                            <details><summary>Por que isso combina comigo?</summary><p id="desc-porque" class="exp-motivo mt-2"></p></details>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button id="d-explorar" class="exp-grad" type="button">Explorar essa descoberta</button>
+                                <button id="d-outra" class="exp-contorno" type="button">Descobrir outro caminho</button>
+                                <button id="d-guardar" class="exp-contorno" type="button">Guardar descoberta</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-6">
+                    <div class="exp-vidro p-3 h-100">
+                        <h2 class="h4 mb-3 text-font-aureon-logo">Conexões Improváveis</h2>
+                        <div class="exp-par mb-2"><span class="exp-tag" id="c-a"></span><span class="linha"></span><span class="meio" id="c-r"></span><span class="linha"></span><span class="exp-tag" id="c-b"></span></div>
+                        <details><summary>Entender a ligação</summary><p id="c-txt" class="exp-motivo mt-2"></p></details>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <button id="c-explorar" class="exp-grad" type="button">Explorar os dois lados</button>
+                            <button id="c-outra" class="exp-contorno" type="button">Outra combinação</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- CAMINHOS DE APRENDIZAGEM -->
+            <section class="exp-vidro p-3 mb-4">
+                <h2 class="h4 mb-3 text-font-aureon-logo">Caminhos de Aprendizagem</h2>
+                <div id="cam-escolha" class="d-flex flex-wrap gap-2 mb-3"></div>
+                <div id="cam-passos" class="exp-caminho mb-3"></div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="cam-pre" class="exp-contorno" type="button" aria-pressed="false">Ver pré-requisitos</button>
+                    <button id="cam-comecar" class="exp-grad" type="button">Começar este caminho</button>
+                </div>
+            </section>
+
+            <!-- EXPLORE POR ÁREA -->
+            <section class="mb-4">
+                <h2 class="h4 mb-3 text-font-aureon-logo">Explore por Área</h2>
+                <div id="areas" class="d-flex flex-wrap gap-2"></div>
+            </section>
+
+            <!-- MINHAS DESCOBERTAS -->
+            <section class="exp-vidro p-3 mb-4">
+                <h2 class="h4 mb-3 text-font-aureon-logo">Minhas Descobertas</h2>
+                <div id="minhas" class="row g-3"></div>
+            </section>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
+            <ul class="nav col-md-4 mb-0 list-unstyled d-flex">
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Sobre nós </a></li>
+                <li class="nav-item"><a href="" class="nav-link px-2 text-white"> Termos de Serviço </a></li>
+            </ul>
+            <a href="index.html" class="col-md-4 mb-3 mb-md-0 me-md-auto text-logo-aureon d-flex align-items-center justify-content-center text-decoration-none text-font-aureon-logo">Aureon</a>
+            <ul class="nav fs-4 justify-content-end list-unstyled d-flex col-md-4">
+                <li class="ms-3"><a href="" class="bi bi-instagram"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-facebook"></a></li>
+                <li class="ms-3"><a href="" class="bi bi-youtube"></a></li>
+            </ul>
+        </footer>
+
+        <!-- Detalhes do curso -->
+        <div class="modal fade" id="modal-curso" tabindex="-1" aria-labelledby="m-titulo" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content exp-modal">
+                    <div class="modal-header border-0"><h2 class="modal-title h4" id="m-titulo"></h2><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+                    <div class="modal-body" id="m-corpo"></div>
+                    <div class="modal-footer border-0" id="m-rodape"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="aviso" class="exp-aviso" role="status" aria-live="polite"></div>
+
+        <!-- Aureon IA (por enquanto só o aviso; o chatbot vem por último) -->
+        <button id="ia-btn" class="exp-ia-btn" type="button" aria-label="Abrir Aureon IA" aria-expanded="false"><i class="bi bi-chat-dots"></i></button>
+        <div id="ia-box" class="exp-vidro exp-ia-box" hidden><strong>Aureon IA</strong><p class="mb-0 mt-1" style="font-size:.9rem">Olá! O assistente chega em uma próxima versão. Por enquanto, use a pesquisa por pergunta.</p></div>
+
+        <script>
+            const AREAS = ["Programação Criativa", "Design de Interface", "Arte Generativa", "Edição de Vídeo", "Música Digital", "Web3", "Gestão Ágil", "Psicologia Cognitiva"];
+            const MINHAS_AREAS = ["Programação Criativa", "Design de Interface"];
+            const PARADAS = ["como", "posso", "quero", "aprender", "para", "uma", "que", "com", "sobre", "qual", "quais", "criar", "fazer", "meu", "minha", "algo"];
+
+            const cursos = [
+                { id: 1, t: "Python Avançado para IA", area: "Programação Criativa", tags: ["IA", "Programação"], nivel: "Avançado", min: 480, tipo: "Projetos práticos", hab: ["Python", "Machine Learning"], ic: "bi-cpu", d: "Use Python em redes neurais e projetos de inteligência artificial.", pre: "Python intermediário", rec: "Você já explorou conteúdos de programação e tecnologia. Este curso aprofunda uma habilidade que você já usa." },
+                { id: 2, t: "UX Design e Comportamento Humano", area: "Design de Interface", tags: ["Design", "Psicologia"], nivel: "Intermediário", min: 300, tipo: "Aulas interativas", hab: ["Pesquisa com usuários", "Prototipação"], ic: "bi-window-stack", d: "Entenda como as pessoas pensam para criar interfaces melhores.", pre: "Noções básicas de design", rec: "Seu interesse em Design de Interface combina com Psicologia, que ajuda a entender como as pessoas usam os produtos." },
+                { id: 3, t: "Música e Algoritmos", area: "Música Digital", tags: ["Criatividade", "Som", "Lógica"], nivel: "Iniciante", min: 150, tipo: "Aulas interativas", hab: ["Lógica", "Síntese sonora"], ic: "bi-music-note-beamed", d: "Crie sons e ritmos usando lógica de programação.", pre: "Nenhum", rec: "Une lógica e criatividade, duas áreas que aparecem no seu mapa de habilidades." },
+                { id: 4, t: "Introdução à Lógica de Programação", area: "Programação Criativa", tags: ["Lógica", "Programação"], nivel: "Iniciante", min: 90, tipo: "Exercícios", hab: ["Lógica", "Algoritmos"], ic: "bi-braces", d: "Os primeiros passos para pensar como um programador.", pre: "Nenhum" },
+                { id: 5, t: "Arte Generativa com JavaScript", area: "Arte Generativa", tags: ["Arte", "Programação"], nivel: "Intermediário", min: 240, tipo: "Projetos práticos", hab: ["JavaScript", "Criatividade"], ic: "bi-stars", d: "Desenhe imagens que se criam sozinhas a partir de regras e código.", pre: "Lógica de programação" },
+                { id: 6, t: "Edição de Vídeo com After Effects", area: "Edição de Vídeo", tags: ["Vídeo", "Animação"], nivel: "Intermediário", min: 360, tipo: "Videoaulas", hab: ["Animação", "Pós-produção"], ic: "bi-camera-reels", d: "Animações e efeitos para vídeos profissionais.", pre: "Edição básica" },
+                { id: 7, t: "Fundamentos de Web3", area: "Web3", tags: ["Tecnologia", "Blockchain"], nivel: "Iniciante", min: 120, tipo: "Textos", hab: ["Blockchain", "Carteiras digitais"], ic: "bi-link-45deg", d: "O que é a web descentralizada e como ela funciona.", pre: "Nenhum" },
+                { id: 8, t: "Gestão Ágil na Prática", area: "Gestão Ágil", tags: ["Negócios", "Equipes"], nivel: "Iniciante", min: 60, tipo: "Exercícios", hab: ["Scrum", "Organização"], ic: "bi-kanban", d: "Organize projetos em pequenas entregas com Scrum e Kanban.", pre: "Nenhum" },
+                { id: 9, t: "Psicologia Cognitiva", area: "Psicologia Cognitiva", tags: ["Psicologia", "Mente"], nivel: "Iniciante", min: 180, tipo: "Videoaulas", hab: ["Atenção", "Memória"], ic: "bi-lightbulb", d: "Como percebemos, lembramos e tomamos decisões.", pre: "Nenhum" },
+                { id: 10, t: "Figma do Zero", area: "Design de Interface", tags: ["Design"], nivel: "Iniciante", min: 45, tipo: "Projetos práticos", hab: ["Figma", "Protótipos"], ic: "bi-vector-pen", d: "Monte seu primeiro protótipo de aplicativo em poucos passos.", pre: "Nenhum" },
+                { id: 11, t: "Storytelling para Vídeo", area: "Edição de Vídeo", tags: ["Escrita", "Vídeo"], nivel: "Iniciante", min: 30, tipo: "Textos", hab: ["Roteiro", "Narrativa"], ic: "bi-pencil", d: "Conte boas histórias em poucos minutos de vídeo.", pre: "Nenhum" }
+            ];
+
+            const descobertas = [
+                { a: "Psicologia Cognitiva", area: "Psicologia Cognitiva", p: "Programação e design lidam com a forma como as pessoas pensam. Entender a mente ajuda a criar produtos melhores." },
+                { a: "Música e Algoritmos", area: "Música Digital", p: "Música tem padrões e regras, assim como o código. Pode ser uma forma nova de praticar lógica." },
+                { a: "Arte Generativa", area: "Arte Generativa", p: "Une criatividade e programação, duas áreas que você já explora." },
+                { a: "Web3", area: "Web3", p: "É uma área em crescimento que usa conhecimentos de programação em um contexto novo." },
+                { a: "Storytelling para Vídeo", area: "Edição de Vídeo", p: "Boas histórias deixam qualquer projeto, de app a vídeo, mais fácil de entender." }
+            ];
+
+            const conexoes = [
+                { a: "Programação", b: "Psicologia", r: "UX Design", area: "Design de Interface", txt: "Quem programa precisa entender como as pessoas usam o que cria. A psicologia mostra isso." },
+                { a: "Design", b: "Matemática", r: "Arte Generativa", area: "Arte Generativa", txt: "Formas, proporções e padrões podem ser descritos com fórmulas e gerados por código." },
+                { a: "Literatura", b: "Jogos", r: "Narrativa Interativa", area: "Edição de Vídeo", txt: "Histórias em que o público escolhe o rumo usam técnicas de escrita e de lógica de jogos." },
+                { a: "Matemática", b: "Música", r: "Áudio digital", area: "Música Digital", txt: "O som é feito de ondas, e a matemática descreve como criá-las e transformá-las." }
+            ];
+
+            const caminhos = [
+                { nome: "Ciência de Dados e IA", passos: [["Iniciante em Python", "Nenhum"], ["Lógica Avançada", "Python básico"], ["Data Science 101", "Lógica avançada"], ["Machine Learning", "Estatística básica"]] },
+                { nome: "Desenvolvimento de Software", passos: [["Lógica de programação", "Nenhum"], ["Introdução à programação", "Lógica básica"], ["Estruturas de dados", "Programação básica"], ["Desenvolvimento web", "Estruturas de dados"], ["Banco de dados", "Desenvolvimento web"], ["Projeto final", "Todas as etapas"]] }
+            ];
+
+            // Estado (as escolhas ficam salvas neste navegador)
+            let estado = { salvos: [], jornada: [], descobertas: [], caminhos: [] };
+            try { const s = JSON.parse(localStorage.getItem("aureon-explorar")); if (s) estado = Object.assign(estado, s); } catch (e) { /* segue sem salvar */ }
+            function gravar() { try { localStorage.setItem("aureon-explorar", JSON.stringify(estado)); } catch (e) { /* segue sem salvar */ } }
+
+            const f = { q: "", modo: "tudo", area: "", nivel: "", duracao: "", pouco: false, zero: false, pratica: false, fora: false };
+            const INTELIGENTES = [["pouco", "Tenho pouco tempo"], ["zero", "Quero começar do zero"], ["pratica", "Quero colocar em prática"], ["fora", "Quero sair da minha área"]];
+
+            const $ = (id) => document.getElementById(id);
+            function el(tag, cls, txt) {
+                const e = document.createElement(tag);
+                if (cls) e.className = cls;
+                if (txt !== undefined) e.textContent = txt;
+                return e;
+            }
+            function btn(txt, cls, fn) { const b = el("button", cls, txt); b.type = "button"; b.onclick = fn; return b; }
+            function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+            function dur(min) { const h = Math.floor(min / 60), m = min % 60; return h === 0 ? m + " min" : h + " h" + (m ? " " + m + " min" : ""); }
+            function avisar(msg) {
+                const a = $("aviso");
+                a.textContent = msg; a.classList.add("ver");
+                clearTimeout(avisar.t); avisar.t = setTimeout(() => a.classList.remove("ver"), 2600);
+            }
+            function irParaResultados() { $("sec-res").scrollIntoView({ behavior: "smooth", block: "start" }); }
+
+            // Busca e filtros
+            function filtrar() {
+                let lista = cursos.filter((c) => {
+                    if (f.area && c.area !== f.area) return false;
+                    if (f.nivel && c.nivel !== f.nivel) return false;
+                    if (f.duracao === "1h" && c.min > 60) return false;
+                    if (f.duracao === "5h" && (c.min <= 60 || c.min > 300)) return false;
+                    if (f.duracao === "5h+" && c.min <= 300) return false;
+                    if (f.pouco && c.min > 120) return false;
+                    if (f.zero && c.nivel !== "Iniciante") return false;
+                    if (f.pratica && !["Projetos práticos", "Exercícios"].includes(c.tipo)) return false;
+                    if (f.fora && MINHAS_AREAS.includes(c.area)) return false;
+                    return true;
+                });
+                if (f.q.trim()) {
+                    const termos = norm(f.q).split(/[^a-z0-9+#]+/).filter((t) => t.length > 2 && !PARADAS.includes(t));
+                    lista = lista.filter((c) => {
+                        const base = norm((f.modo === "habilidade" ? c.hab.concat(c.tags) : [c.t, c.area, c.d].concat(c.tags, c.hab)).join(" "));
+                        return termos.some((t) => base.includes(t.length > 5 ? t.slice(0, 5) : t));
+                    });
+                }
+                return lista;
+            }
+
+            function cartao(c) {
+                const k = el("article", "exp-vidro exp-card h-100");
+                const topo = el("div", "exp-topo");
+                topo.innerHTML = '<i class="bi ' + c.ic + '" aria-hidden="true"></i>';
+                const tags = el("div", "d-flex flex-wrap gap-1 my-2");
+                c.tags.forEach((x) => tags.appendChild(el("span", "exp-tag", x)));
+                const motivo = el("p", "exp-motivo mt-2 mb-0", c.rec || "Este curso aparece porque combina com a sua pesquisa e com os filtros escolhidos.");
+                motivo.hidden = true;
+                const acoes = el("div", "acoes d-flex flex-wrap gap-2 mt-3");
+                const salvo = estado.salvos.includes(c.id);
+                acoes.append(
+                    btn("Começar a aprender", "exp-grad", () => iniciar(c)),
+                    btn("Por que este curso?", "exp-contorno", () => { motivo.hidden = !motivo.hidden; }),
+                    btn(salvo ? "Salvo ✓" : "Salvar", "exp-contorno" + (salvo ? " ativo" : ""), () => alternarSalvo(c))
+                );
+                k.append(topo, btn(c.t, "exp-titulo", () => detalhes(c)), tags, el("small", "text-white-50", c.nivel + " · " + dur(c.min) + " · " + c.tipo), motivo, acoes);
+                return k;
+            }
+            function coluna(conteudo) { const c = el("div", "col-md-6 col-lg-4"); c.appendChild(conteudo); return c; }
+
+            function iniciar(c) {
+                if (!estado.jornada.includes(c.id)) estado.jornada.push(c.id);
+                gravar(); avisar("“" + c.t + "” foi adicionado à sua jornada."); atualizar();
+            }
+            function alternarSalvo(c) {
+                const i = estado.salvos.indexOf(c.id);
+                if (i >= 0) estado.salvos.splice(i, 1); else estado.salvos.push(c.id);
+                gravar(); avisar(i >= 0 ? "Curso removido dos salvos." : "Curso salvo para depois."); atualizar();
+            }
+
+            function detalhes(c) {
+                $("m-titulo").textContent = c.t;
+                const corpo = $("m-corpo");
+                corpo.replaceChildren(
+                    el("p", "", c.d),
+                    el("p", "mb-1", "Área: " + c.area + " · Nível: " + c.nivel),
+                    el("p", "mb-1", "Duração: " + dur(c.min) + " · Formato: " + c.tipo),
+                    el("p", "mb-1", "Você vai desenvolver: " + c.hab.join(", ")),
+                    el("p", "mb-0", "Pré-requisitos: " + c.pre)
+                );
+                const r = $("m-rodape");
+                r.replaceChildren(
+                    btn("Iniciar curso", "exp-grad", () => { iniciar(c); bootstrap.Modal.getOrCreateInstance($("modal-curso")).hide(); }),
+                    btn("Salvar curso", "exp-contorno", () => alternarSalvo(c))
+                );
+                bootstrap.Modal.getOrCreateInstance($("modal-curso")).show();
+            }
+
+            // Desenho da página
+            function mostrarFiltros() {
+                const ativoF = !!(f.area || f.nivel || f.duracao || f.pouco || f.zero || f.pratica || f.fora);
+                const ativoQ = !!f.q.trim();
+                $("b-limpar-f").hidden = !ativoF;
+                $("b-limpar-q").hidden = !ativoQ;
+                $("m-pergunta").classList.toggle("ativo", f.modo === "pergunta");
+                $("m-pergunta").setAttribute("aria-pressed", f.modo === "pergunta");
+                $("m-habilidade").classList.toggle("ativo", f.modo === "habilidade");
+                $("m-habilidade").setAttribute("aria-pressed", f.modo === "habilidade");
+                $("dica").textContent = f.modo === "pergunta" ? "Escreva uma pergunta completa, por exemplo: como aprender programação?" : f.modo === "habilidade" ? "Procure uma habilidade, por exemplo: Python ou Figma." : "";
+                $("q").placeholder = f.modo === "pergunta" ? "Escreva sua pergunta aqui…" : f.modo === "habilidade" ? "Qual habilidade você quer desenvolver?" : "Qual conhecimento você gostaria de descobrir hoje?";
+                $("sec-res").hidden = !(ativoF || ativoQ);
+                if (ativoF || ativoQ) {
+                    const lista = filtrar();
+                    $("res-titulo").textContent = "Resultados (" + lista.length + ")";
+                    const g = $("res-grade");
+                    g.replaceChildren();
+                    if (!lista.length) g.appendChild(el("p", "text-white-50", "Não encontrei cursos com esses critérios. Tente outras palavras, limpe os filtros ou explore uma área abaixo."));
+                    lista.forEach((c) => g.appendChild(coluna(cartao(c))));
+                }
+                const inte = $("inteligentes");
+                inte.replaceChildren();
+                INTELIGENTES.forEach(([chave, nome]) => {
+                    const b = btn(nome, "exp-chip" + (f[chave] ? " ativo" : ""), () => { f[chave] = !f[chave]; mostrarFiltros(); });
+                    b.setAttribute("aria-pressed", f[chave]);
+                    inte.appendChild(b);
+                });
+                const areas = $("areas");
+                areas.replaceChildren();
+                AREAS.forEach((a) => {
+                    const b = btn(a, "exp-chip" + (f.area === a ? " ativo" : ""), () => { f.area = f.area === a ? "" : a; mostrarFiltros(); if (f.area) irParaResultados(); });
+                    b.setAttribute("aria-pressed", f.area === a);
+                    areas.appendChild(b);
+                });
+            }
+
+            function mostrarRecomendados() {
+                const g = $("rec-grade");
+                g.replaceChildren();
+                cursos.filter((c) => c.rec).forEach((c) => g.appendChild(coluna(cartao(c))));
+            }
+
+            function lista(titulo, itens) {
+                const col = el("div", "col-md-6 col-lg-3");
+                col.appendChild(el("h3", "h6 text-white-50", titulo));
+                const ul = el("ul", "exp-lista list-unstyled mb-0");
+                if (!itens.length) ul.appendChild(el("li", "text-white-50", "Nada por aqui ainda."));
+                itens.forEach(([txt, remover]) => {
+                    const li = el("li", "");
+                    li.appendChild(el("span", "", txt));
+                    li.appendChild(btn("Remover", "", remover));
+                    ul.appendChild(li);
+                });
+                col.appendChild(ul);
+                return col;
+            }
+            function nomeCurso(id) { return cursos.find((c) => c.id === id).t; }
+            function mostrarMinhas() {
+                const m = $("minhas");
+                m.replaceChildren(
+                    lista("Cursos salvos", estado.salvos.map((id) => [nomeCurso(id), () => { estado.salvos = estado.salvos.filter((x) => x !== id); gravar(); atualizar(); }])),
+                    lista("Em andamento", estado.jornada.map((id) => [nomeCurso(id), () => { estado.jornada = estado.jornada.filter((x) => x !== id); gravar(); atualizar(); }])),
+                    lista("Descobertas guardadas", estado.descobertas.map((d) => [d, () => { estado.descobertas = estado.descobertas.filter((x) => x !== d); gravar(); atualizar(); }])),
+                    lista("Caminhos iniciados", estado.caminhos.map((c) => [c, () => { estado.caminhos = estado.caminhos.filter((x) => x !== c); gravar(); atualizar(); }]))
+                );
+            }
+            function atualizar() { mostrarFiltros(); mostrarRecomendados(); mostrarMinhas(); }
+
+            // Surpreenda-me
+            let dAtual = -1;
+            function surpreender() {
+                let i;
+                do { i = Math.floor(Math.random() * descobertas.length); } while (i === dAtual && descobertas.length > 1);
+                dAtual = i;
+                $("desc-assunto").textContent = descobertas[i].a;
+                $("desc-porque").textContent = descobertas[i].p;
+                $("desc-box").hidden = false;
+            }
+
+            // Conexões improváveis
+            let cAtual = 0;
+            function mostrarConexao() {
+                const c = conexoes[cAtual];
+                $("c-a").textContent = c.a; $("c-b").textContent = c.b; $("c-r").textContent = c.r; $("c-txt").textContent = c.txt;
+            }
+
+            // Caminhos
+            let camAtual = 0;
+            function mostrarCaminho() {
+                const esc = $("cam-escolha");
+                esc.replaceChildren();
+                caminhos.forEach((c, i) => {
+                    const b = btn(c.nome, "exp-chip" + (i === camAtual ? " ativo" : ""), () => { camAtual = i; mostrarCaminho(); });
+                    b.setAttribute("aria-pressed", i === camAtual);
+                    esc.appendChild(b);
+                });
+                const p = $("cam-passos");
+                p.replaceChildren();
+                caminhos[camAtual].passos.forEach(([nome, pre], i) => {
+                    const d = el("div", "exp-passo");
+                    d.append(el("div", "num", String(i + 1)), el("div", "", nome), el("div", "pre", "Antes: " + pre));
+                    p.appendChild(d);
+                });
+            }
+
+            // Eventos
+            function pesquisar() { f.q = $("q").value; mostrarFiltros(); if (f.q.trim()) irParaResultados(); }
+            $("b-pesq").onclick = pesquisar;
+            $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") pesquisar(); });
+            $("b-limpar-q").onclick = () => { $("q").value = ""; f.q = ""; mostrarFiltros(); };
+            $("m-pergunta").onclick = () => { f.modo = f.modo === "pergunta" ? "tudo" : "pergunta"; mostrarFiltros(); };
+            $("m-habilidade").onclick = () => { f.modo = f.modo === "habilidade" ? "tudo" : "habilidade"; mostrarFiltros(); };
+            $("f-nivel").onchange = (e) => { f.nivel = e.target.value; mostrarFiltros(); };
+            $("f-dur").onchange = (e) => { f.duracao = e.target.value; mostrarFiltros(); };
+            $("b-limpar-f").onclick = () => {
+                Object.assign(f, { area: "", nivel: "", duracao: "", pouco: false, zero: false, pratica: false, fora: false });
+                $("f-nivel").value = ""; $("f-dur").value = ""; mostrarFiltros();
+            };
+            $("b-surpresa").onclick = surpreender;
+            $("d-outra").onclick = surpreender;
+            $("d-explorar").onclick = () => { f.area = descobertas[dAtual].area; mostrarFiltros(); irParaResultados(); };
+            $("d-guardar").onclick = () => {
+                const a = descobertas[dAtual].a;
+                if (!estado.descobertas.includes(a)) estado.descobertas.push(a);
+                gravar(); avisar("Descoberta guardada."); atualizar();
+            };
+            $("c-outra").onclick = () => { cAtual = (cAtual + 1) % conexoes.length; mostrarConexao(); };
+            $("c-explorar").onclick = () => { f.area = conexoes[cAtual].area; mostrarFiltros(); irParaResultados(); };
+            $("cam-pre").onclick = (e) => {
+                const ligado = $("cam-passos").classList.toggle("mostrar-pre");
+                e.currentTarget.classList.toggle("ativo", ligado);
+                e.currentTarget.setAttribute("aria-pressed", ligado);
+            };
+            $("cam-comecar").onclick = () => {
+                const n = caminhos[camAtual].nome;
+                if (!estado.caminhos.includes(n)) estado.caminhos.push(n);
+                gravar(); avisar("Caminho adicionado à sua jornada."); atualizar();
+            };
+            $("ia-btn").onclick = (e) => {
+                const box = $("ia-box");
+                box.hidden = !box.hidden;
+                e.currentTarget.setAttribute("aria-expanded", !box.hidden);
+            };
+
+            atualizar();
+            mostrarConexao();
+            mostrarCaminho();
+        </script>
+    </body>
+</html>
