@@ -419,7 +419,7 @@
             }
 
             // ===== BANCO DE DADOS (Supabase) =====
-            const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co/rest/v1/";
+            const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co";
             const SUPABASE_ANON_KEY = "sb_publishable_5fi0MrkuA9nUyvC23fxpJQ_E2Nlkrbc";
             const db = (window.supabase && !SUPABASE_URL.startsWith("COLE")) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
             const marcados = (n) => [...document.querySelectorAll('input[name="' + n + '"]:checked')].map((i) => i.value);
