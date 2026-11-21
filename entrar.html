@@ -436,7 +436,8 @@
                 if (m.includes("email not confirmed")) return "Confirme seu e-mail pelo link que enviamos antes de entrar.";
                 if (m.includes("rate") || m.includes("too many")) return "Muitas tentativas. Aguarde um pouco e tente de novo.";
                 if (m.includes("fetch") || m.includes("network")) return "Sem conexão com o servidor. Verifique sua internet.";
-                return "Não foi possível concluir. Tente novamente.";
+                console.error("Erro Supabase:", err);
+                return "Não foi possível concluir. Detalhe: " + ((err && err.message) || "erro desconhecido");
             }
 
             $("form-cadastro").addEventListener("submit", async (e) => {
@@ -471,6 +472,7 @@
                     $("forca-barra").style.width = "0"; $("forca-txt").textContent = "";
                     aplicarTipo();
                     sucesso("Conta criada, " + nome.split(/\s+/)[0] + "!", data.session ? "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " está pronta." : "Enviamos um link de confirmação para o seu e-mail. Confirme para poder entrar.");
+                    if (data.session) setTimeout(() => { location.href = "perfil.html"; }, 1800);
                 } catch (err) {
                     tremer();
                     $("resumo-cadastro").textContent = traduzir(err);
@@ -492,7 +494,8 @@
                     if (error) throw error;
                     $("l-senha").value = "";
                     const nome = ((data.user.user_metadata || {}).nome || "").split(/\s+/)[0];
-                    sucesso("Tudo certo" + (nome ? ", " + nome : "") + "!", "Você entrou na sua conta.");
+                    sucesso("Tudo certo" + (nome ? ", " + nome : "") + "!", "Levando você ao seu perfil…");
+                    setTimeout(() => { location.href = "perfil.html"; }, 1400);
                 } catch (err) {
                     tremer();
                     $("aviso-login").textContent = traduzir(err);
