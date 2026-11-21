@@ -234,9 +234,10 @@
 
                 </div>
             </div>
-            <p class="lg-nota">Esta é uma versão de demonstração: nenhum dado é enviado ou salvo.</p>
+            <p class="lg-nota">Seus dados são armazenados com segurança.</p>
         </main>
 
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
         <script>
         (() => {
             "use strict";
@@ -417,75 +418,98 @@
                 if (primeiro) primeiro.focus();
             }
 
-$("#form-cadastro").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (ocupado) return;
-  const invalidos = [];
-  campos.cadastro.forEach((c) => { if (!validarCampo(c)) invalidos.push($(#${c.id})); });
-  if (!validarGrupo("interesses")) invalidos.push(document.querySelector('input[name="interesses"]'));
-  if (!validarGrupo("ensino")) invalidos.push(document.querySelector('input[name="ensino"]'));
-  $("#resumo-cadastro").textContent = "";
-  if (invalidos.length) { falhou(invalidos); return; }
+            // ===== BANCO DE DADOS (Supabase) =====
+            const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co/rest/v1/";
+            const SUPABASE_ANON_KEY = "sb_publishable_5fi0MrkuA9nUyvC23fxpJQ_E2Nlkrbc";
+            const db = (window.supabase && !SUPABASE_URL.startsWith("COLE")) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+            const marcados = (n) => [...document.querySelectorAll('input[name="' + n + '"]:checked')].map((i) => i.value);
+            function ocupar(botao, on) {
+                ocupado = on;
+                botao.disabled = on;
+                if (on) botao.setAttribute("aria-busy", "true"); else botao.removeAttribute("aria-busy");
+                botao.querySelector(".lg-rot").textContent = on ? "Aguarde…" : botao.dataset.rotulo;
+            }
+            function traduzir(err) {
+                const m = (err && err.message || "").toLowerCase();
+                if (m.includes("invalid login")) return "E-mail ou senha incorretos.";
+                if (m.includes("already") || m.includes("registered")) return "Este e-mail já está cadastrado. Tente entrar.";
+                if (m.includes("email not confirmed")) return "Confirme seu e-mail pelo link que enviamos antes de entrar.";
+                if (m.includes("rate") || m.includes("too many")) return "Muitas tentativas. Aguarde um pouco e tente de novo.";
+                if (m.includes("fetch") || m.includes("network")) return "Sem conexão com o servidor. Verifique sua internet.";
+                return "Não foi possível concluir. Tente novamente.";
+            }
 
-  const nome = $("#c-nome").value.trim().split(/\s+/)[0];
-  const nomeCompleto = $("#c-nome").value.trim();
-  const emailEl = document.querySelector('#form-cadastro input[type="email"]');
-  const senhaEl = document.querySelector('#form-cadastro input[type="password"]');
-  const email = emailEl ? emailEl.value.trim() : "";
-  const senha = senhaEl ? senhaEl.value : "";
-  const prof = ehProfessor();
-
-  const criado = await cadastrarUsuario(nomeCompleto, email, senha);
-  if (!criado) return;
-
-  if (criado.user) {
-    await salvarPerfil({
-      nome: nomeCompleto,
-      badge: prof ? "Professor(a) Aureon" : "Aluno(a) Aureon"
-    });
-  }
-
-  $("#form-cadastro").reset();
-  document.querySelectorAll('#form-cadastro [aria-invalid]').forEach((i) => i.removeAttribute("aria-invalid"));
-  document.querySelectorAll(".lg-erro").forEach((p) => { p.textContent = ""; });
-  $("#forca-barra").style.width = "0"; $("#forca-txt").textContent = "";
-  document.querySelectorAll(".lg-olho").forEach((b) => { $(b.dataset.alvo).type = "password"; b.setAttribute("aria-pressed", "false"); });
-  aplicarTipo();
-  sucesso("Conta criada, " + nome + "!", "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " foi criada e salva. Verifique o seu e-mail para confirmar.");
-        });
+            $("form-cadastro").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (ocupado) return;
+                const invalidos = [];
+                campos.cadastro.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
+                if (!validarGrupo("interesses")) invalidos.push(document.querySelector('input[name="interesses"]'));
+                if (!validarGrupo("ensino")) invalidos.push(document.querySelector('input[name="ensino"]'));
+                $("resumo-cadastro").textContent = "";
+                if (invalidos.length) { falhou(invalidos, $("resumo-cadastro")); return; }
+                if (!db) { $("resumo-cadastro").textContent = "Banco de dados ainda não configurado (veja SUPABASE_URL no código)."; return; }
+                const prof = ehProfessor();
+                const nome = $("c-nome").value.trim();
+                const cpf = $("c-cpf").value.replace(/\D/g, "");
+                const btn = $("btn-cadastro");
+                ocupar(btn, true);
+                try {
+                    const { data, error } = await db.auth.signUp({
+                        email: $("c-email").value.trim().toLowerCase(),
+                        password: $("c-senha").value,
+                        options: {
+                            emailRedirectTo: location.origin + location.pathname,
+                            data: { nome, tipo: prof ? "professor" : "aluno", cpf: cpf || null, interesses: marcados("interesses"), ensino: prof ? marcados("ensino") : [] }
+                        }
+                    });
+                    if (error) throw error;
+                    if (data.user && data.user.identities && data.user.identities.length === 0) throw new Error("already registered");
+                    $("form-cadastro").reset();
+                    document.querySelectorAll("#form-cadastro [aria-invalid]").forEach((i) => i.removeAttribute("aria-invalid"));
+                    document.querySelectorAll(".lg-erro").forEach((p) => { p.textContent = ""; });
+                    $("forca-barra").style.width = "0"; $("forca-txt").textContent = "";
+                    aplicarTipo();
+                    sucesso("Conta criada, " + nome.split(/\s+/)[0] + "!", data.session ? "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " está pronta." : "Enviamos um link de confirmação para o seu e-mail. Confirme para poder entrar.");
+                } catch (err) {
+                    tremer();
+                    $("resumo-cadastro").textContent = traduzir(err);
+                } finally { ocupar(btn, false); }
             });
 
-           $("#form-login").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (ocupado) return;
-  const invalidos = [];
-  campos.login.forEach((c) => { if (!validarCampo(c)) invalidos.push($(#${c.id})); });
-  if (invalidos.length) { falhou(invalidos); return; }
+            $("form-login").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (ocupado) return;
+                const invalidos = [];
+                campos.login.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
+                $("aviso-login").textContent = "";
+                if (invalidos.length) { falhou(invalidos); return; }
+                if (!db) { $("aviso-login").textContent = "Banco de dados ainda não configurado (veja SUPABASE_URL no código)."; return; }
+                const btn = $("btn-login");
+                ocupar(btn, true);
+                try {
+                    const { data, error } = await db.auth.signInWithPassword({ email: $("l-email").value.trim().toLowerCase(), password: $("l-senha").value });
+                    if (error) throw error;
+                    $("l-senha").value = "";
+                    const nome = ((data.user.user_metadata || {}).nome || "").split(/\s+/)[0];
+                    sucesso("Tudo certo" + (nome ? ", " + nome : "") + "!", "Você entrou na sua conta.");
+                } catch (err) {
+                    tremer();
+                    $("aviso-login").textContent = traduzir(err);
+                } finally { ocupar(btn, false); }
+            });
 
-  const email = $("#l-email").value.trim();
-  const senha = $("#l-senha").value;
+            $("btn-esqueci").addEventListener("click", async () => {
+                const email = $("l-email").value.trim();
+                if (!emailOk(email)) { $("aviso-login").textContent = "Digite seu e-mail acima para receber o link de recuperação."; $("l-email").focus(); return; }
+                if (!db) { $("aviso-login").textContent = "Banco de dados ainda não configurado."; return; }
+                const { error } = await db.auth.resetPasswordForEmail(email.toLowerCase(), { redirectTo: location.origin + location.pathname });
+                $("aviso-login").textContent = error ? traduzir(error) : "Se esse e-mail existir, enviamos um link de recuperação.";
+            });
 
-  const resultado = await entrarUsuario(email, senha);
-  if (resultado) {
-    $("#l-senha").value = "";
-    sucesso("Bem-vindo(a) de volta!", "Entrando no seu espaço Aureon...");
-  }
-});
-
-$("#btn-esqueci").addEventListener("click", async () => {
-  const email = $("#l-email").value.trim();
-  if (!email) {
-    $("#aviso-login").textContent = "Digite seu e-mail no campo acima primeiro.";
-    return;
-  }
-  await recuperarSenha(email);
-  $("#aviso-login").textContent = "Enviamos um link para o seu e-mail (veja também o spam).";
-});
             aplicarTipo();
             mostrarVista(location.hash === "#cadastro" ? "cadastro" : "login", false, false);
         })();
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="aureon-conta.js"></script>
     </body>
 </html>
