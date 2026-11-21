@@ -4,7 +4,7 @@
   "use strict";
 
   // ===== COLE AQUI A MESMA URL E CHAVE ANON DO entrar.html =====
-  const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co/rest/v1/";
+  const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_5fi0MrkuA9nUyvC23fxpJQ_E2Nlkrbc";
   // =============================================================
 
