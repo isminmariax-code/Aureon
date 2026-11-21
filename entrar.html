@@ -417,26 +417,42 @@
                 if (primeiro) primeiro.focus();
             }
 
-            $("form-cadastro").addEventListener("submit", (e) => {
-                e.preventDefault();
-                if (ocupado) return;
-                const invalidos = [];
-                campos.cadastro.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
-                if (!validarGrupo("interesses")) invalidos.push(document.querySelector('input[name="interesses"]'));
-                if (!validarGrupo("ensino")) invalidos.push(document.querySelector('input[name="ensino"]'));
-                $("resumo-cadastro").textContent = "";
-                if (invalidos.length) { falhou(invalidos, $("resumo-cadastro")); return; }
-                const nome = $("c-nome").value.trim().split(/\s+/)[0];
-                const prof = ehProfessor();
-                simular($("btn-cadastro"), () => {
-                    $("form-cadastro").reset();
-                    document.querySelectorAll("#form-cadastro [aria-invalid]").forEach((i) => i.removeAttribute("aria-invalid"));
-                    document.querySelectorAll(".lg-erro").forEach((p) => { p.textContent = ""; });
-                    $("forca-barra").style.width = "0"; $("forca-txt").textContent = "";
-                    document.querySelectorAll(".lg-olho").forEach((b) => { $(b.dataset.alvo).type = "password"; b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-label", "Mostrar senha"); b.firstElementChild.className = "bi bi-eye"; });
-                    aplicarTipo();
-                    sucesso("Conta criada, " + nome + "!", "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " foi criada na versão de demonstração. Nenhum dado foi enviado ou salvo.");
-                });
+$("#form-cadastro").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (ocupado) return;
+  const invalidos = [];
+  campos.cadastro.forEach((c) => { if (!validarCampo(c)) invalidos.push($(#${c.id})); });
+  if (!validarGrupo("interesses")) invalidos.push(document.querySelector('input[name="interesses"]'));
+  if (!validarGrupo("ensino")) invalidos.push(document.querySelector('input[name="ensino"]'));
+  $("#resumo-cadastro").textContent = "";
+  if (invalidos.length) { falhou(invalidos); return; }
+
+  const nome = $("#c-nome").value.trim().split(/\s+/)[0];
+  const nomeCompleto = $("#c-nome").value.trim();
+  const emailEl = document.querySelector('#form-cadastro input[type="email"]');
+  const senhaEl = document.querySelector('#form-cadastro input[type="password"]');
+  const email = emailEl ? emailEl.value.trim() : "";
+  const senha = senhaEl ? senhaEl.value : "";
+  const prof = ehProfessor();
+
+  const criado = await cadastrarUsuario(nomeCompleto, email, senha);
+  if (!criado) return;
+
+  if (criado.user) {
+    await salvarPerfil({
+      nome: nomeCompleto,
+      badge: prof ? "Professor(a) Aureon" : "Aluno(a) Aureon"
+    });
+  }
+
+  $("#form-cadastro").reset();
+  document.querySelectorAll('#form-cadastro [aria-invalid]').forEach((i) => i.removeAttribute("aria-invalid"));
+  document.querySelectorAll(".lg-erro").forEach((p) => { p.textContent = ""; });
+  $("#forca-barra").style.width = "0"; $("#forca-txt").textContent = "";
+  document.querySelectorAll(".lg-olho").forEach((b) => { $(b.dataset.alvo).type = "password"; b.setAttribute("aria-pressed", "false"); });
+  aplicarTipo();
+  sucesso("Conta criada, " + nome + "!", "Sua conta de " + (prof ? "professor(a)" : "aluno(a)") + " foi criada e salva. Verifique o seu e-mail para confirmar.");
+        });
             });
 
            $("#form-login").addEventListener("submit", async (e) => {
