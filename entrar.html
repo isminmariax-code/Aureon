@@ -439,23 +439,37 @@
                 });
             });
 
-            $("form-login").addEventListener("submit", (e) => {
-                e.preventDefault();
-                if (ocupado) return;
-                const invalidos = [];
-                campos.login.forEach((c) => { if (!validarCampo(c)) invalidos.push($(c.id)); });
-                $("aviso-login").textContent = "";
-                if (invalidos.length) { falhou(invalidos); return; }
-                simular($("btn-login"), () => {
-                    $("l-senha").value = "";
-                    sucesso("Tudo certo!", "Login de demonstração: ainda não existe servidor de contas, então nada foi verificado ou salvo.");
-                });
-            });
-            $("btn-esqueci").addEventListener("click", () => { $("aviso-login").textContent = "Na versão final, enviaremos um link de recuperação para o seu e-mail."; });
+           $("#form-login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (ocupado) return;
+  const invalidos = [];
+  campos.login.forEach((c) => { if (!validarCampo(c)) invalidos.push($(#${c.id})); });
+  if (invalidos.length) { falhou(invalidos); return; }
 
+  const email = $("#l-email").value.trim();
+  const senha = $("#l-senha").value;
+
+  const resultado = await entrarUsuario(email, senha);
+  if (resultado) {
+    $("#l-senha").value = "";
+    sucesso("Bem-vindo(a) de volta!", "Entrando no seu espaço Aureon...");
+  }
+});
+
+$("#btn-esqueci").addEventListener("click", async () => {
+  const email = $("#l-email").value.trim();
+  if (!email) {
+    $("#aviso-login").textContent = "Digite seu e-mail no campo acima primeiro.";
+    return;
+  }
+  await recuperarSenha(email);
+  $("#aviso-login").textContent = "Enviamos um link para o seu e-mail (veja também o spam).";
+});
             aplicarTipo();
             mostrarVista(location.hash === "#cadastro" ? "cadastro" : "login", false, false);
         })();
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="aureon-conta.js"></script>
     </body>
 </html>
