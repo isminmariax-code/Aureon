@@ -1,148 +1,213 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aureon: descubra cursos, habilidades e uma comunidade para aprender do seu jeito.">
+    <meta name="theme-color" content="#151a35">
 
-        <!-- Bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        
-        <!-- Animate.js  -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
 
-        <!-- CSS -->
-        <link href="./src/styles/reset.css" rel="stylesheet">
-        <link href="./src/styles/mainStyle.css" rel="stylesheet">
+    <!-- CSS do projeto -->
+    <link href="./src/styles/reset.css" rel="stylesheet">
+    <link href="./src/styles/mainStyle.css" rel="stylesheet">
 
+    <style>
+        /* Fundo leve (sem imagem pesada): degradê + ondas em SVG */
+        html, body { background: #151a35; background-image: radial-gradient(60vmax 40vmax at 0% 18%, rgba(110,139,255,.22), transparent 70%), radial-gradient(60vmax 40vmax at 100% 14%, rgba(227,166,255,.2), transparent 70%); background-repeat: no-repeat; }
+        body { position: relative; }
+        .cd-fundo { position: absolute; inset: 0 0 auto 0; height: 640px; overflow: hidden; pointer-events: none; z-index: 0; }
+        .cd-fundo svg { width: 100%; height: 100%; display: block; }
+        nav.navbar, main, footer { position: relative; z-index: 1; }
 
-        <title>Aureon</title>
-    </head>
+        .cd-secao { max-width: 1100px; margin: 0 auto; padding: 0 1rem 2.5rem; }
+        .cd-cab { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .6rem; }
+        .cd-cab h2 { margin: 0; font-size: clamp(1.4rem, 4vw, 1.9rem); font-weight: 400; color: #d8dcff; }
+        .cd-cab h2 i { color: #8fa3ff; font-size: .8em; }
+        .cd-setas { display: flex; gap: .4rem; }
+        .cd-setas button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(160,190,255,.45); background: rgba(20,26,70,.6); color: #fff; cursor: pointer; transition: background .2s, transform .2s; }
+        .cd-setas button:hover { background: rgba(143,163,255,.3); transform: translateY(-2px); }
 
-    <body>
-        <!-- #region 
-        -- BARRA DE NAVEGAÇÃO (nav) --
-        Toda barra de navegação fica nessa tag -->
-        <nav class="navbar navbar-expand-lg">        
-            <div class="container-fluid">
+        .cd-trilho { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: .9rem .5rem 1.1rem; scrollbar-width: none; list-style: none; margin: 0; }
+        .cd-trilho::-webkit-scrollbar { display: none; }
+        .cd-card { flex: 0 0 196px; scroll-snap-align: start; display: block; padding: .6rem; border-radius: 16px; text-decoration: none; color: #fff; background: rgba(20,26,70,.55); border: 1px solid rgba(170,185,255,.5); box-shadow: 0 0 16px rgba(143,163,255,.25); transition: transform .25s, box-shadow .25s; }
+        .cd-card:hover, .cd-card:focus-visible { transform: translateY(-4px); box-shadow: 0 0 22px rgba(214,168,255,.5); color: #fff; }
+        .cd-thumb { height: 92px; border-radius: 10px; display: grid; place-items: center; font-size: 2.4rem; color: #fff; background: linear-gradient(135deg, var(--a), var(--b)); }
+        .cd-nome { margin: .55rem 0 .4rem; font-size: .88rem; font-weight: 600; line-height: 1.25; min-height: 2.2em; }
+        .cd-meta { display: flex; align-items: center; justify-content: space-between; font-size: .75rem; color: #cfd2ff; }
+        .cd-prof { display: flex; align-items: center; gap: .35rem; }
+        .cd-av { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: .65rem; font-weight: 700; color: #14173f; background: linear-gradient(135deg, #9fe6ff, #d6a8ff); flex: none; }
+        .cd-nota i { color: #ffd36b; }
 
-                <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="#">Aureon</a>
-                <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="bi bi-list fs-3"></i>  
-                </button>
+        .cd-troca { display: grid; grid-template-columns: 1fr 70px 1fr; gap: .9rem 0; align-items: center; }
+        .cd-col { display: grid; gap: .9rem; }
+        .cd-par { display: flex; align-items: center; gap: .7rem; padding: .55rem .9rem; border-radius: 999px; font-size: .85rem; line-height: 1.25; background: rgba(20,26,70,.55); border: 1px solid rgba(170,185,255,.5); transition: border-color .25s, box-shadow .25s; }
+        .cd-par:hover { border-color: #d6a8ff; box-shadow: 0 0 14px rgba(214,168,255,.4); }
+        .cd-par .cd-av { width: 34px; height: 34px; font-size: .85rem; }
+        .cd-par b { font-weight: 600; }
+        .cd-liga { width: 100%; height: 100%; min-height: 110px; }
+        @media (max-width: 640px) { .cd-troca { grid-template-columns: 1fr; } .cd-liga { display: none; } .cd-card { flex-basis: 170px; } }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+    </style>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    
-                    <ul class="navbar-nav mx-auto text-primary">
-                        <li class="navbar-item" aria-current="page">
-                            <a class="nav-link text-white" href="explorar-cursos.html">Explorar Cursos</a>
-                        </li>
-                        <li class="navbar-item" aria-current="page">
-                            <a class="nav-link text-white" href="minhas-habilidades.html">Minhas Habilidades</a>
-                        </li>
-                        <li class="navbar-item" aria-current="page">
-                            <a class="nav-link text-white" href="comunidade.html">Comunidade</a>
-                        </li>
-                        <li class="navbar-item" aria-current="page">
-                            <a class="nav-link text-white" href="#">Como Funciona</a>
-                        </li>
-                    </ul>
+    <title>Aureon</title>
+</head>
 
-                    
-                    <form class="d-flex ">
-                           <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button" onclick="location.href='entrar.html'"> Entrar </button>
-        <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button" onclick="location.href='entrar.html#cadastro'"> Criar Conta </button>
-                    </form>
+<body>
+    <!-- Ondas decorativas (SVG leve, sem imagem) -->
+    <div class="cd-fundo" aria-hidden="true">
+        <svg viewBox="0 0 1440 640" preserveAspectRatio="none" focusable="false">
+            <defs>
+                <linearGradient id="gOnda" x1="0" x2="1">
+                    <stop offset="0" stop-color="#6e8bff" stop-opacity="0"/>
+                    <stop offset=".25" stop-color="#8fb4ff" stop-opacity=".55"/>
+                    <stop offset=".6" stop-color="#e3a6ff" stop-opacity=".5"/>
+                    <stop offset="1" stop-color="#6e8bff" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path d="M0 330 C 200 200 380 400 580 310 S 980 170 1220 270 S 1390 330 1440 280 L1440 360 C 1300 400 1180 330 1000 280 S 640 420 420 440 S 120 400 0 400 Z" fill="url(#gOnda)" opacity=".35"/>
+            <path d="M0 330 C 200 200 380 400 580 310 S 980 170 1220 270 S 1390 330 1440 280" fill="none" stroke="url(#gOnda)" stroke-width="2.5"/>
+            <path d="M0 360 C 220 250 400 430 600 345 S 1000 215 1240 310 S 1400 360 1440 320" fill="none" stroke="url(#gOnda)" stroke-width="1.5" opacity=".6"/>
+        </svg>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="index.html">Aureon</a>
+            <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir ou fechar o menu">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto text-primary">
+                    <li class="navbar-item"><a class="nav-link text-white" href="explorar-cursos.html">Explorar Cursos</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="minhas-habilidades.html">Minhas Habilidades</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="comunidade.html">Comunidade</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="#">Como Funciona</a></li>
+                </ul>
+                <form class="d-flex">
+                    <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button" onclick="location.href='entrar.html'"> Entrar </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button" onclick="location.href='entrar.html#cadastro'"> Criar Conta </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- BOAS-VINDAS -->
+        <div class="container-fluid text-font-aureon-logo text-center py-4 pb-5 d-flex flex-column lh-1" id="welcome-text">
+            <div> <p class="fs-5 my-0"> Seja bem vindo(a) ao </p> </div>
+            <div id="welcome-logo"> <h1 class="my-0 py-0" style="font:inherit;color:inherit"> Aureon </h1> </div>
+            <div> <p class="fs-5 my-0"> Descubra caminhos que você ainda não sabia que existiam </p> </div>
+        </div>
+
+        <!-- ÁREAS -->
+        <div class="container-fluid d-flex justify-content-center flex-wrap pb-5 gap-3" id="home-btns">
+            <button class="bnt card-style-aureon" type="button">
+                <i class="bi bi-braces display-5 home-bnt-icons" aria-hidden="true"></i>
+                <p class="fs-6 text-white"> Programação Criativa </p>
+            </button>
+            <button class="bnt card-style-aureon" type="button">
+                <i class="bi bi-hand-index-thumb display-5 home-bnt-icons" aria-hidden="true"></i>
+                <p class="fs-6 text-white pt-1"> Design de Interface </p>
+            </button>
+            <button class="bnt card-style-aureon" type="button">
+                <i class="bi bi-stars display-5 home-bnt-icons" aria-hidden="true"></i>
+                <p class="fs-6 text-white pt-1"> Arte Generativa </p>
+            </button>
+            <button class="bnt card-style-aureon" type="button">
+                <i class="bi bi-camera-reels display-5 home-bnt-icons" aria-hidden="true"></i>
+                <p class="fs-6 text-white pt-1"> Edição de Vídeo </p>
+            </button>
+        </div>
+
+        <!-- CURSOS EM DESTAQUE (exemplos: troque pelos seus cursos reais) -->
+        <section class="cd-secao" aria-labelledby="t-cursos">
+            <div class="cd-cab">
+                <h2 id="t-cursos" class="text-font-aureon-logo">Cursos em destaque <i class="bi bi-stars" aria-hidden="true"></i></h2>
+                <div class="cd-setas">
+                    <button type="button" id="cd-ant" aria-label="Cursos anteriores"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+                    <button type="button" id="cd-prox" aria-label="Próximos cursos"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
                 </div>
-
             </div>
-
-        </nav>
-        <!-- #endregion -->
-        
-        <!-- #region 
-        -- TAG PRINCIPAL (main) -- 
-        Para armazenar as informações mais importantes -->
-        <main>
-            <div class="container-fluid text-font-aureon-logo text-center py-4 pb-5 d-flex flex-column lh-1" id="welcome-text">
-                <div> <p class="fs-5 my-0"> Seja bem vindo(a) ao </p> </div>
-                <div id="welcome-logo"> <p class="my-0 py-0"> Aureon </p> </div>
-                <div> <p class="fs-5 my-0"> Descubra caminhos que você não sabia que existia </p> </div>
-            </div>
-
-            <div class="container-fluid d-flex justify-content-center flex-wrap pb-5  gap-3" id="home-btns">
-                <button class="bnt card-style-aureon" type="button">
-                    <i class="bi bi-braces display-5 home-bnt-icons"></i>
-                    <p class="fs-6 text-white"> Programação Criativa </p>
-                </button>
-                <button class="bnt card-style-aureon" type="button">
-                    <i class="bi bi-hand-index-thumb display-5 home-bnt-icons"></i>
-                    <p class="fs-6 text-white pt-1"> Desing de Interface </p>
-                </button>
-                <button class="bnt card-style-aureon" type="button">
-                    <i class="bi bi-stars display-5 home-bnt-icons"></i>
-                    <p class="fs-6 text-white pt-1"> Arte Generativa </p>
-                </button>
-                <button class="bnt card-style-aureon" type="button">
-                    <i class="bi bi-camera-reels display-5 home-bnt-icons"></i>
-                    <p class="fs-6 text-white pt-1"> Edição de Vídeo </p>
-                </button>
-            </div>
-
-            <div id="featured-cards" class="container pb-5">
-                <div id="featured-cards-header" class="container-fluid d-flex justify-content-between align-items-center">
-                    <p class="fs-2 text-font-aureon-logo"> Cursos em destaque <span class="bi bi-stars"></span> </p>
-
-                    <div id="featured-cards-header-buttons">
-                        <button class="btn btn-featured-cards bi bi-caret-left-fill featured-cards-arrows" id="featured-cards-left-arrow"></button>
-                        <button class="btn btn-featured-cards bi bi-caret-right-fill featured-cards-arrows" id="featured-cards-right-arrow"></button>
-                    </div>
-                </div>
-
-                <div id="featured-cards-body" class="container-fluid d-flex px-3 pb-3 pt-1 gap-4">
-                </div>
-            </div>
-
-            <div class="pb-5" hidden>
-                <p class="fs-2 text-font-aureon-logo"> Troca de Abilidades <span class="bi bi-stars"></span> </p>
-            </div>
-        </main>
-        <!-- #endregion -->
-        
-        <!-- #region 
-        -- RODAPE (footer) --
-        Onde fica as informações extras do website -->
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
-            <ul class="nav col-md-4 mb-0 list-unstyled d-flex">
-                <li class="nav-item">
-                    <a href="" class="nav-link px-2 text-white"> Sobre nós </a>
-                </li>
-                <li class="nav-item">
-                    <a href="" class="nav-link px-2 text-white"> Termos de Serviço </a>
-                </li>
-            </ul>   
-
-            <a href="" class="  
-                col-md-4 mb-3 mb-md-0 me-md-auto text-logo-aureon
-                d-flex align-items-center justify-content-center text-decoration-none text-font-aureon-logo">
-                Aureon
-            </a>
-
-            <ul class="nav fs-4 justify-content-end list-unstyled d-flex col-md-4">
-                <li class="ms-3"> <a href="" class="bi bi-instagram"></a> </li>
-                <li class="ms-3"> <a href="" class="bi bi-facebook"></a> </li>
-                <li class="ms-3"> <a href="" class="bi bi-youtube"></a> </li>
+            <ul class="cd-trilho" id="cd-trilho" tabindex="0" aria-label="Lista de cursos em destaque">
+                <li><a class="cd-card" href="explorar-cursos.html">
+                    <div class="cd-thumb" style="--a:#4458b8;--b:#7a4fa8"><i class="bi bi-cpu" aria-hidden="true"></i></div>
+                    <p class="cd-nome">Python Avançado para IA</p>
+                    <div class="cd-meta"><span class="cd-prof"><span class="cd-av" aria-hidden="true">M</span>Maria</span><span class="cd-nota"><i class="bi bi-star-fill" aria-hidden="true"></i> 4,5<span class="visually-hidden"> de 5</span></span></div>
+                </a></li>
+                <li><a class="cd-card" href="explorar-cursos.html">
+                    <div class="cd-thumb" style="--a:#3f7fd0;--b:#8a6ad8"><i class="bi bi-window-stack" aria-hidden="true"></i></div>
+                    <p class="cd-nome">UX Design e Comportamento Humano</p>
+                    <div class="cd-meta"><span class="cd-prof"><span class="cd-av" aria-hidden="true">M</span>Maria</span><span class="cd-nota"><i class="bi bi-star-fill" aria-hidden="true"></i> 4,5<span class="visually-hidden"> de 5</span></span></div>
+                </a></li>
+                <li><a class="cd-card" href="explorar-cursos.html">
+                    <div class="cd-thumb" style="--a:#6a4fc8;--b:#d06ac0"><i class="bi bi-stars" aria-hidden="true"></i></div>
+                    <p class="cd-nome">Arte Generativa</p>
+                    <div class="cd-meta"><span class="cd-prof"><span class="cd-av" aria-hidden="true">M</span>Maria</span><span class="cd-nota"><i class="bi bi-star-fill" aria-hidden="true"></i> 4,5<span class="visually-hidden"> de 5</span></span></div>
+                </a></li>
+                <li><a class="cd-card" href="explorar-cursos.html">
+                    <div class="cd-thumb" style="--a:#3a6fb0;--b:#4fb0c8"><i class="bi bi-camera-reels" aria-hidden="true"></i></div>
+                    <p class="cd-nome">Edição de Vídeo</p>
+                    <div class="cd-meta"><span class="cd-prof"><span class="cd-av" aria-hidden="true">M</span>Maria</span><span class="cd-nota"><i class="bi bi-star-fill" aria-hidden="true"></i> 4,5<span class="visually-hidden"> de 5</span></span></div>
+                </a></li>
+                <li><a class="cd-card" href="explorar-cursos.html">
+                    <div class="cd-thumb" style="--a:#5a56c0;--b:#e08a7a"><i class="bi bi-music-note-beamed" aria-hidden="true"></i></div>
+                    <p class="cd-nome">Música e Algoritmos</p>
+                    <div class="cd-meta"><span class="cd-prof"><span class="cd-av" aria-hidden="true">M</span>Maria</span><span class="cd-nota"><i class="bi bi-star-fill" aria-hidden="true"></i> 4,5<span class="visually-hidden"> de 5</span></span></div>
+                </a></li>
             </ul>
-        </footer>
-        <!-- #endregion -->
+        </section>
 
-        <!-- #region
-        -- SCRIPTS DO JS -- 
-        Carregado somente quando a pagina inteira for carregada -->
-        <script type="text/javascript" src="./src/scripts/featuredCards.js"></script>
-        <!-- #endregion -->
+        <!-- TROCA DE HABILIDADES (exemplos) -->
+        <section class="cd-secao" aria-labelledby="t-troca">
+            <div class="cd-cab">
+                <h2 id="t-troca" class="text-font-aureon-logo">Troca de habilidades <i class="bi bi-stars" aria-hidden="true"></i></h2>
+            </div>
+            <div class="cd-troca">
+                <div class="cd-col">
+                    <div class="cd-par"><span class="cd-av" aria-hidden="true">J</span><span><b>João</b><br>oferece UI/UX, busca Edição de Som</span></div>
+                    <div class="cd-par"><span class="cd-av" aria-hidden="true">C</span><span><b>Carlos</b><br>oferece UI/UX, busca Edição de Vídeo</span></div>
+                </div>
+                <svg class="cd-liga" viewBox="0 0 70 160" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <path d="M0 40 H20 L50 120 H70 M0 120 H20 L50 40 H70" fill="none" stroke="#8fa3ff" stroke-opacity=".6" stroke-width="1.5"/>
+                </svg>
+                <div class="cd-col">
+                    <div class="cd-par"><span class="cd-av" aria-hidden="true">A</span><span><b>Ana</b><br>oferece Edição de Som, busca UI/UX</span></div>
+                    <div class="cd-par"><span class="cd-av" aria-hidden="true">L</span><span><b>Laura</b><br>oferece Edição de Vídeo, busca Python</span></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
+        <ul class="nav col-md-4 mb-0 list-unstyled d-flex">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-white"> Sobre nós </a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-white"> Termos de Serviço </a></li>
+        </ul>
+        <a href="index.html" class="col-md-4 mb-3 mb-md-0 me-md-auto text-logo-aureon d-flex align-items-center justify-content-center text-decoration-none text-font-aureon-logo">Aureon</a>
+        <ul class="nav fs-4 justify-content-end list-unstyled d-flex col-md-4">
+            <li class="ms-3"><a href="#" class="bi bi-instagram" aria-label="Instagram do Aureon"></a></li>
+            <li class="ms-3"><a href="#" class="bi bi-facebook" aria-label="Facebook do Aureon"></a></li>
+            <li class="ms-3"><a href="#" class="bi bi-youtube" aria-label="YouTube do Aureon"></a></li>
+        </ul>
+    </footer>
+
+    <script>
+        // setas do carrossel de cursos
+        (function () {
+            var trilho = document.getElementById("cd-trilho");
+            var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            function passo(d) { trilho.scrollBy({ left: d * trilho.clientWidth * 0.8, behavior: reduz ? "auto" : "smooth" }); }
+            document.getElementById("cd-ant").addEventListener("click", function () { passo(-1); });
+            document.getElementById("cd-prox").addEventListener("click", function () { passo(1); });
+        })();
+    </script>
     <script src="lyra.js"></script>
-    <script src="aureon-sessao.js?v=4"></script>
-    </body>
+    <script src="aureon-sessao.js?v=5"></script>
+</body>
 </html>
