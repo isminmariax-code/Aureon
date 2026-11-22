@@ -1,7 +1,8 @@
-/* Aureon - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair" no menu.
+/* Aureon v4 - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair" no menu.
    Use em todas as páginas (menos entrar.html e perfil.html). */
 (() => {
   "use strict";
+  console.log("aureon-sessao v4");
 
   const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_5fi0MrkuA9nUyvC23fxpJQ_E2Nlkrbc";
@@ -12,23 +13,44 @@
 
   let db = null;
   let trocou = false;
-
   const txt = (el) => (el.textContent || "").trim().toLowerCase();
 
-  // Acha o botão/link do menu pelo texto, seja <a>, <button> ou qualquer outro elemento
-  function achar(lista) {
+  // todos os elementos da página, inclusive dentro de componentes (shadow DOM abertos)
+  function todos(raiz, lista = []) {
+    raiz.querySelectorAll("*").forEach((el) => {
+      lista.push(el);
+      if (el.shadowRoot) todos(el.shadowRoot, lista);
+    });
+    return lista;
+  }
+
+  function tipoDe(el) {
+    if (el.id === "bnt-login") return "entrar";
+    if (el.id === "bnt-register") return "criar";
+    const t = txt(el);
+    if (CRIAR.includes(t)) return "criar";
+    if (ENTRAR.includes(t)) return "entrar";
+    if (el.tagName === "A" && t.length < 30) {
+      const h = (el.getAttribute("href") || "").toLowerCase();
+      if (h.includes("entrar.html")) return h.includes("cadastro") ? "criar" : "entrar";
+    }
+    return null;
+  }
+
+  function achar() {
     const achados = [];
-    document.body.querySelectorAll("*").forEach((el) => {
-      if (IGNORAR.includes(el.tagName) || el.id === "aureon-flutuante" || el.closest("#aureon-flutuante")) return;
-      if (!lista.includes(txt(el)) || el.closest("form")) return;
-      // só o elemento mais interno com esse texto
-      if ([...el.children].some((c) => txt(c) === txt(el))) return;
+    todos(document.body).forEach((el) => {
+      if (IGNORAR.includes(el.tagName) || el.closest("#aureon-flutuante")) return;
+      const f = el.closest("form");
+      if (f && f.querySelector("input, textarea, select")) return;
+      const tipo = tipoDe(el);
+      if (!tipo) return;
+      if ([...el.children].some((c) => txt(c) === txt(el))) return; // só o mais interno
       let alvo = el.closest("a, button, [role='button']") || el;
-      // sobe se o link/botão estiver embrulhado em outro link/botão com o mesmo texto
       while (alvo.parentElement && ["A", "BUTTON"].includes(alvo.parentElement.tagName) && txt(alvo.parentElement) === txt(alvo)) {
         alvo = alvo.parentElement;
       }
-      if (!achados.includes(alvo)) achados.push(alvo);
+      if (!achados.some((a) => a.alvo === alvo)) achados.push({ alvo, tipo });
     });
     return achados;
   }
@@ -41,14 +63,18 @@
     novo.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); aoClicar(); });
     el.replaceWith(novo);
     trocou = true;
+    const f = document.getElementById("aureon-flutuante");
+    if (f) f.remove();
   }
 
   function aplicar() {
-    achar(ENTRAR).forEach((el) => trocar(el, "Meu Perfil", () => { location.href = "perfil.html"; }, "perfil.html"));
-    achar(CRIAR).forEach((el) => trocar(el, "Sair", async () => { await db.auth.signOut(); location.reload(); }));
+    achar().forEach(({ alvo, tipo }) => {
+      if (tipo === "entrar") trocar(alvo, "Meu Perfil", () => { location.href = "perfil.html"; }, "perfil.html");
+      else trocar(alvo, "Sair", async () => { await db.auth.signOut(); location.reload(); });
+    });
   }
 
-  // Plano B: se o menu não for encontrado, cria botões pequenos no canto da tela
+  // Plano B: se o menu não for encontrado, mostra botões pequenos no canto da tela
   function flutuante() {
     if (trocou || document.getElementById("aureon-flutuante")) return;
     const caixa = document.createElement("div");
@@ -72,14 +98,18 @@
     db.auth.getSession().then(({ data }) => {
       if (!data || !data.session) return;
       aplicar();
-      // se o menu for montado depois por outro script, aplica de novo (por até 3 segundos)
+      let n = 0;
+      const rep = setInterval(() => { aplicar(); if (++n >= 10) clearInterval(rep); }, 500); // menus montados depois
       const obs = new MutationObserver(aplicar);
       obs.observe(document.body, { childList: true, subtree: true });
-      setTimeout(() => { obs.disconnect(); flutuante(); }, 3000);
+      setTimeout(() => { obs.disconnect(); flutuante(); }, 5200);
     }).catch(() => {});
   }
 
   function carregar() {
+    const st = document.createElement("style");
+    st.textContent = "html,body{max-width:100%;overflow-x:hidden}";
+    document.head.appendChild(st);
     if (window.supabase) { iniciar(); return; }
     const s = document.createElement("script");
     s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
