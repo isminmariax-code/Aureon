@@ -1,4 +1,4 @@
-/* Aureon - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair".
+/* Aureon - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair" no menu.
    Use em todas as páginas (menos entrar.html e perfil.html). */
 (() => {
   "use strict";
@@ -8,18 +8,34 @@
 
   const ENTRAR = ["entrar", "login", "fazer login"];
   const CRIAR = ["criar conta", "cadastre-se", "cadastrar"];
+  const IGNORAR = ["H1", "H2", "H3", "H4", "H5", "H6", "P", "LABEL", "TITLE", "OPTION", "SCRIPT", "STYLE"];
 
   let db = null;
   let trocou = false;
 
+  const txt = (el) => (el.textContent || "").trim().toLowerCase();
+
+  // Acha o botão/link do menu pelo texto, seja <a>, <button> ou qualquer outro elemento
   function achar(lista) {
-    return [...document.querySelectorAll("a, button")].filter((el) =>
-      lista.includes(el.textContent.trim().toLowerCase()) && !el.closest("form")
-    );
+    const achados = [];
+    document.body.querySelectorAll("*").forEach((el) => {
+      if (IGNORAR.includes(el.tagName) || el.id === "aureon-flutuante" || el.closest("#aureon-flutuante")) return;
+      if (!lista.includes(txt(el)) || el.closest("form")) return;
+      // só o elemento mais interno com esse texto
+      if ([...el.children].some((c) => txt(c) === txt(el))) return;
+      let alvo = el.closest("a, button, [role='button']") || el;
+      // sobe se o link/botão estiver embrulhado em outro link/botão com o mesmo texto
+      while (alvo.parentElement && ["A", "BUTTON"].includes(alvo.parentElement.tagName) && txt(alvo.parentElement) === txt(alvo)) {
+        alvo = alvo.parentElement;
+      }
+      if (!achados.includes(alvo)) achados.push(alvo);
+    });
+    return achados;
   }
 
   function trocar(el, texto, aoClicar, href) {
     const novo = el.cloneNode(false);
+    novo.removeAttribute("onclick");
     novo.textContent = texto;
     if (novo.tagName === "A") novo.setAttribute("href", href || "#");
     novo.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); aoClicar(); });
@@ -32,18 +48,19 @@
     achar(CRIAR).forEach((el) => trocar(el, "Sair", async () => { await db.auth.signOut(); location.reload(); }));
   }
 
-
-  // Plano B: se o menu não tiver "Entrar", cria um botão flutuante no canto da tela
+  // Plano B: se o menu não for encontrado, cria botões pequenos no canto da tela
   function flutuante() {
     if (trocou || document.getElementById("aureon-flutuante")) return;
     const caixa = document.createElement("div");
     caixa.id = "aureon-flutuante";
     caixa.style.cssText = "position:fixed;top:12px;right:12px;z-index:99999;display:flex;gap:8px;font:14px 'Segoe UI',system-ui,sans-serif";
-    const estilo = "padding:8px 16px;border-radius:999px;cursor:pointer;text-decoration:none;color:#14173f;background:linear-gradient(90deg,#9fe6ff,#d6a8ff);border:0;font:inherit;font-weight:600";
+    const base = "appearance:none;outline:0;box-shadow:none;margin:0;padding:8px 16px;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;font-weight:600;line-height:1.2;";
     const a = document.createElement("a");
-    a.href = "perfil.html"; a.textContent = "Meu Perfil"; a.style.cssText = estilo;
+    a.href = "perfil.html"; a.textContent = "Meu Perfil";
+    a.style.cssText = base + "color:#14173f;background:linear-gradient(90deg,#9fe6ff,#d6a8ff);border:0";
     const b = document.createElement("button");
-    b.type = "button"; b.textContent = "Sair"; b.style.cssText = estilo.replace("color:#14173f","color:#fff").replace(/background:[^;]+;/, "background:rgba(20,26,70,.9);") + ";border:1px solid #9fd8ff";
+    b.type = "button"; b.textContent = "Sair";
+    b.style.cssText = base + "color:#fff;background:rgba(20,26,70,.95);border:1px solid #9fd8ff";
     b.addEventListener("click", async () => { await db.auth.signOut(); location.reload(); });
     caixa.append(a, b);
     document.body.appendChild(caixa);
@@ -55,10 +72,10 @@
     db.auth.getSession().then(({ data }) => {
       if (!data || !data.session) return;
       aplicar();
-      // se o menu for montado depois por outro script, aplica de novo (por até 8 segundos)
+      // se o menu for montado depois por outro script, aplica de novo (por até 3 segundos)
       const obs = new MutationObserver(aplicar);
       obs.observe(document.body, { childList: true, subtree: true });
-      setTimeout(() => { obs.disconnect(); flutuante(); }, 1800);
+      setTimeout(() => { obs.disconnect(); flutuante(); }, 3000);
     }).catch(() => {});
   }
 
