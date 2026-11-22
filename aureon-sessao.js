@@ -1,28 +1,20 @@
-/* Aureon v4 - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair" no menu.
-   Use em todas as páginas (menos entrar.html e perfil.html). */
+/* Aureon v6 - quando a pessoa está logada, troca "Entrar" por "Meu Perfil" e "Criar Conta" por "Sair" no menu.
+   Use em todas as páginas (menos entrar.html e perfil.html). Leve: troca uma vez e para. */
 (() => {
   "use strict";
-  console.log("aureon-sessao v4");
+  if (window.__aureonSessao) return; // nunca roda duas vezes
+  window.__aureonSessao = true;
+  console.log("aureon-sessao v6");
 
   const SUPABASE_URL = "https://lekomrszaspewopcokwg.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_5fi0MrkuA9nUyvC23fxpJQ_E2Nlkrbc";
 
   const ENTRAR = ["entrar", "login", "fazer login"];
   const CRIAR = ["criar conta", "cadastre-se", "cadastrar"];
-  const IGNORAR = ["H1", "H2", "H3", "H4", "H5", "H6", "P", "LABEL", "TITLE", "OPTION", "SCRIPT", "STYLE"];
 
   let db = null;
   let trocou = false;
   const txt = (el) => (el.textContent || "").trim().toLowerCase();
-
-  // todos os elementos da página, inclusive dentro de componentes (shadow DOM abertos)
-  function todos(raiz, lista = []) {
-    raiz.querySelectorAll("*").forEach((el) => {
-      lista.push(el);
-      if (el.shadowRoot) todos(el.shadowRoot, lista);
-    });
-    return lista;
-  }
 
   function tipoDe(el) {
     if (el.id === "bnt-login") return "entrar";
@@ -37,40 +29,25 @@
     return null;
   }
 
-  function achar() {
-    const achados = [];
-    todos(document.body).forEach((el) => {
-      if (IGNORAR.includes(el.tagName) || el.closest("#aureon-flutuante")) return;
-      const f = el.closest("form");
-      if (f && f.querySelector("input, textarea, select")) return;
-      const tipo = tipoDe(el);
-      if (!tipo) return;
-      if ([...el.children].some((c) => txt(c) === txt(el))) return; // só o mais interno
-      let alvo = el.closest("a, button, [role='button']") || el;
-      while (alvo.parentElement && ["A", "BUTTON"].includes(alvo.parentElement.tagName) && txt(alvo.parentElement) === txt(alvo)) {
-        alvo = alvo.parentElement;
-      }
-      if (!achados.some((a) => a.alvo === alvo)) achados.push({ alvo, tipo });
-    });
-    return achados;
-  }
-
   function trocar(el, texto, aoClicar, href) {
     const novo = el.cloneNode(false);
     novo.removeAttribute("onclick");
+    novo.dataset.aureon = "1"; // marca para nunca trocar duas vezes
     novo.textContent = texto;
     if (novo.tagName === "A") novo.setAttribute("href", href || "#");
     novo.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); aoClicar(); });
     el.replaceWith(novo);
     trocou = true;
-    const f = document.getElementById("aureon-flutuante");
-    if (f) f.remove();
   }
 
   function aplicar() {
-    achar().forEach(({ alvo, tipo }) => {
-      if (tipo === "entrar") trocar(alvo, "Meu Perfil", () => { location.href = "perfil.html"; }, "perfil.html");
-      else trocar(alvo, "Sair", async () => { await db.auth.signOut(); location.reload(); });
+    document.querySelectorAll("a, button, [role='button']").forEach((el) => {
+      if (el.dataset.aureon === "1" || el.closest("#aureon-flutuante")) return;
+      const f = el.closest("form");
+      if (f && f.querySelector("input, textarea, select")) return; // formulários de verdade ficam como estão
+      const tipo = tipoDe(el);
+      if (tipo === "entrar") trocar(el, "Meu Perfil", () => { location.href = "perfil.html"; }, "perfil.html");
+      else if (tipo === "criar") trocar(el, "Sair", async () => { await db.auth.signOut(); location.reload(); });
     });
   }
 
@@ -98,11 +75,13 @@
     db.auth.getSession().then(({ data }) => {
       if (!data || !data.session) return;
       aplicar();
+      if (trocou) return; // pronto: trocou uma vez e parou
+      // menu montado depois por outro script: tenta algumas vezes e para
       let n = 0;
-      const rep = setInterval(() => { aplicar(); if (++n >= 10) clearInterval(rep); }, 500); // menus montados depois
-      const obs = new MutationObserver(aplicar);
-      obs.observe(document.body, { childList: true, subtree: true });
-      setTimeout(() => { obs.disconnect(); flutuante(); }, 5200);
+      const rep = setInterval(() => {
+        aplicar();
+        if (trocou || ++n >= 8) { clearInterval(rep); flutuante(); }
+      }, 400);
     }).catch(() => {});
   }
 
@@ -113,6 +92,7 @@
     if (window.supabase) { iniciar(); return; }
     const s = document.createElement("script");
     s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
+    s.async = true;
     s.onload = iniciar;
     document.head.appendChild(s);
   }
