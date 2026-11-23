@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Como o Aureon ajuda você a aprender: descubra seus interesses, encontre seu caminho e evolua.">
+    <meta name="theme-color" content="#151a35">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+
+    <!-- CSS do projeto (fundo e fontes originais) -->
+    <link href="./src/styles/reset.css" rel="stylesheet">
+    <link href="./src/styles/mainStyle.css" rel="stylesheet">
+
+    <style>
+        .cf-wrap { max-width: 920px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+        .cf-topo { text-align: center; padding: 1.5rem 0 1.8rem; }
+        .cf-topo h1 { margin: 0 0 .4rem; font-weight: 400; font-size: clamp(2rem, 6vw, 3rem); color: #d8dcff; }
+        .cf-topo p { margin: 0; color: #cfd2ff; font-size: clamp(1rem, 2.6vw, 1.2rem); }
+
+        .cf-passos { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+        .cf-passo { display: grid; grid-template-columns: 210px 1fr; overflow: hidden; border-radius: 16px; background: rgba(20,26,70,.55); border: 1px solid rgba(170,185,255,.4); box-shadow: 0 0 18px rgba(143,163,255,.15); transition: transform .25s, box-shadow .25s, border-color .25s; animation: cf-sobe .6s ease both; animation-delay: calc(var(--i) * 120ms); }
+        .cf-passo:hover { transform: translateY(-3px); border-color: #d6a8ff; box-shadow: 0 0 24px rgba(214,168,255,.35); }
+        .cf-arte { position: relative; min-height: 130px; display: grid; place-items: center; background: radial-gradient(circle at 50% 55%, var(--a), var(--b) 75%); }
+        .cf-arte .cf-grande { font-size: 3.6rem; color: #fff; filter: drop-shadow(0 0 12px rgba(255,255,255,.45)); }
+        .cf-arte .cf-mini { position: absolute; font-size: 1.15rem; color: #fff; opacity: .85; animation: cf-flutua 4s ease-in-out infinite; }
+        .cf-arte .m1 { top: 16%; left: 16%; } .cf-arte .m2 { top: 14%; right: 18%; animation-delay: .8s; } .cf-arte .m3 { bottom: 14%; right: 22%; animation-delay: 1.6s; }
+        .cf-texto { padding: 1.1rem 1.4rem; align-self: center; }
+        .cf-texto h2 { margin: 0 0 .4rem; font-size: clamp(1.15rem, 3vw, 1.4rem); font-weight: 500; color: #fff; }
+        .cf-texto p { margin: 0; color: #d6d9f5; line-height: 1.5; font-size: .98rem; }
+
+        .cf-final { text-align: center; padding: 2rem 0 .5rem; animation: cf-sobe .6s ease both; animation-delay: .5s; }
+        .cf-final p { margin: 0 0 1.2rem; font-size: clamp(1.05rem, 3vw, 1.3rem); color: #fff; }
+        .cf-btn { display: inline-block; padding: .75rem 2rem; border-radius: 999px; font-weight: 600; text-decoration: none; color: #14173f; background: linear-gradient(90deg, #9fe6ff, #d6a8ff); box-shadow: 0 0 20px rgba(159,230,255,.45); transition: transform .2s, box-shadow .2s; }
+        .cf-btn:hover, .cf-btn:focus-visible { transform: translateY(-2px); box-shadow: 0 0 28px rgba(214,168,255,.7); color: #14173f; outline: 2px solid #fff; outline-offset: 3px; }
+        .cf-rodape { text-align: center; padding-top: 1.6rem; font-size: .85rem; color: #aab2ff; }
+
+        @keyframes cf-sobe { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+        @keyframes cf-flutua { 50% { transform: translateY(-5px); } }
+        @media (max-width: 600px) { .cf-passo { grid-template-columns: 1fr; } .cf-arte { min-height: 110px; } .cf-texto { padding: 1rem 1.1rem 1.2rem; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    </style>
+
+    <title>Como funciona - Aureon</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand text-font-aureon-logo text-logo-aureon" href="index.html">Aureon</a>
+            <button class="navbar-toggler border-white text-aureon" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir ou fechar o menu">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto text-primary">
+                    <li class="navbar-item"><a class="nav-link text-white" href="explorar-cursos.html">Explorar Cursos</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="minhas-habilidades.html">Minhas Habilidades</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="comunidade.html">Comunidade</a></li>
+                    <li class="navbar-item"><a class="nav-link text-white" href="como-funciona.html" aria-current="page">Como Funciona</a></li>
+                </ul>
+                <form class="d-flex">
+                    <button class="btn btn-outline-secondary me-2" id="bnt-login" type="button" onclick="location.href='entrar.html'"> Entrar </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="bnt-register" type="button" onclick="location.href='entrar.html#cadastro'"> Criar Conta </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="cf-wrap">
+        <header class="cf-topo">
+            <h1 class="text-font-aureon-logo">Como funciona o Aureon?</h1>
+            <p>Descobrir, aprender e evoluir. Tudo começa com você.</p>
+        </header>
+
+        <ol class="cf-passos">
+            <li class="cf-passo" style="--i:1">
+                <div class="cf-arte" style="--a:#6a8cff;--b:#2c2f7a" aria-hidden="true">
+                    <i class="bi bi-book cf-grande"></i>
+                    <i class="bi bi-star-fill cf-mini m1"></i><i class="bi bi-mortarboard cf-mini m2"></i><i class="bi bi-diagram-3 cf-mini m3"></i>
+                </div>
+                <div class="cf-texto">
+                    <h2>01. Descubra seus interesses</h2>
+                    <p>Explore diferentes áreas do conhecimento, identifique seus interesses e descubra novas possibilidades de aprendizagem.</p>
+                </div>
+            </li>
+            <li class="cf-passo" style="--i:2">
+                <div class="cf-arte" style="--a:#b07af0;--b:#32307a" aria-hidden="true">
+                    <i class="bi bi-signpost-split cf-grande"></i>
+                    <i class="bi bi-cpu cf-mini m1"></i><i class="bi bi-lightbulb cf-mini m2"></i><i class="bi bi-compass cf-mini m3"></i>
+                </div>
+                <div class="cf-texto">
+                    <h2>02. Encontre seu caminho</h2>
+                    <p>Com o auxílio da inteligência artificial, receba recomendações personalizadas de cursos, conteúdos e habilidades de acordo com seus objetivos.</p>
+                </div>
+            </li>
+            <li class="cf-passo" style="--i:3">
+                <div class="cf-arte" style="--a:#5ac0e8;--b:#2a3a80" aria-hidden="true">
+                    <i class="bi bi-graph-up-arrow cf-grande"></i>
+                    <i class="bi bi-trophy cf-mini m1"></i><i class="bi bi-star-fill cf-mini m2"></i><i class="bi bi-bezier2 cf-mini m3"></i>
+                </div>
+                <div class="cf-texto">
+                    <h2>03. Aprenda e evolua</h2>
+                    <p>Acompanhe seu progresso, desenvolva novas habilidades e conecte seus conhecimentos através do Mapa Vivo.</p>
+                </div>
+            </li>
+        </ol>
+
+        <section class="cf-final" aria-label="Comece agora">
+            <p>O conhecimento abre caminhos. Você escolhe até onde chegar.</p>
+            <a class="cf-btn" href="entrar.html#cadastro">Começar minha jornada</a>
+        </section>
+
+        <p class="cf-rodape">AUREON — Descubra caminhos que você não sabia que existiam.</p>
+    </main>
+
+    <script src="aureon-sessao.js?v=6"></script>
+</body>
+</html>
